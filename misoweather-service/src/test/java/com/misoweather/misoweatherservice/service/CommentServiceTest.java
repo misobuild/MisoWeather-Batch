@@ -104,4 +104,22 @@ public class CommentServiceTest {
         verify(commentRepository, times(1)).findAllByOrderByIdDesc(any(Pageable.class));
         verify(commentRepository, times(1)).findByIdLessThanOrderByIdDesc(anyLong(), any(Pageable.class));
     }
+
+    @Test
+    @DisplayName("hasNext() 테스트")
+    void hasNextTest(){
+        Long givenFirstId = 0L;
+        Long givenSecondId = 1L;
+
+        given(commentRepository.existsByIdLessThan(0L)).willReturn(Boolean.FALSE);
+        given(commentRepository.existsByIdLessThan(1L)).willReturn(Boolean.TRUE);
+
+        Boolean firstResult = commentService.hasNext(givenFirstId);
+        Boolean secondResult = commentService.hasNext(givenSecondId);
+        Boolean thirdResult = commentService.hasNext(null);
+
+        Assertions.assertEquals(firstResult, Boolean.FALSE);
+        Assertions.assertEquals(secondResult, Boolean.TRUE);
+        Assertions.assertEquals(thirdResult, Boolean.FALSE);
+    }
 }
