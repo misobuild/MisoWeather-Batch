@@ -21,12 +21,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -83,44 +87,52 @@ public class CommentServiceTest {
         verify(commentRepository, times(1)).save(comment);
     }
 
-//    @Test
-//    @DisplayName(("CommentService: 테스트")){
-//        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-//                .regionStatus(RegionEnum.DEFAULT)
-//                .member(member)
-//                .region(null)
-//                .build();
-//
-//        Comment comment = Comment.builder()
-//                .content("We're happy in Misoweather")
-//                .bigScale(bigScale)
-//                .member(member)
-//                .nickname(member.getNickname())
-//                .deleted(Boolean.FALSE)
-//                .emoji(member.getEmoji())
-//                .build();
-//
-//        List memberRegionMappingList = new ArrayList();
-//        memberRegionMappingList.add(memberRegionMapping);
-//        List bigScaleList = new ArrayList();
-//        bigScaleList.add(memberRegionMapping);
-//        List commentLIst = new ArrayList();
-//        commentLIst.add(comment);
-//
-//        given(memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
-//        )
-//                .willReturn(Stream.of(memberRegionMappingList));
-//
-//
-//        given(commentRepository.findAll())
-//                .willReturn(commentLIst);
+    @Test
+    @DisplayName("getComments() 테스트")
+    void getComments() {
+        Member member = Member.builder()
+                .socialId("67890")
+                .emoji("b")
+                .nickname("우울한 진짜광대")
+                .socialType("apple")
+                .build();
 
-        // when
-//        final CommentRegisterResponseDto result = commentService
-//                .registerComment(CommentRegisterRequestDtoBuilder.build("행복한 가짜광대"), member);
+        Member member2 = Member.builder()
+                .socialId("12345")
+                .emoji("a")
+                .nickname("행복한 가짜광대")
+                .socialType("kakao")
+                .build();
 
-        // then
-//        Assertions.assertEquals(commentList.getCommentList().get(0).getContent(), "We're happy in Misoweather");
-//    }
+        Comment comment = Comment.builder()
+                .content(contentReader.checker("안녕하세요"))
+                .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
+                .member(member)
+                .nickname(member.getNickname())
+                .deleted(Boolean.FALSE)
+                .emoji(member.getEmoji())
+                .build();
 
+        Comment comment2 = Comment.builder()
+                .content(contentReader.checker("안녕히계세요"))
+                .bigScale(BigScaleEnum.getEnum("부산광역시").toString())
+                .member(member2)
+                .nickname(member2.getNickname())
+                .deleted(Boolean.FALSE)
+                .emoji(member2.getEmoji())
+                .build();
+
+
+        given(commentRepository.findAllByOrderByIdDesc(any(Pageable.class))).willReturn(List.of(comment2));
+        given(commentRepository.findByIdLessThanOrderByIdDesc(anyLong(), any(Pageable.class))).willReturn(List.of(comment));
+
+        List<Comment> resultCommentList = commentService.getComments(1L, PageRequest.of(0,1));
+        List<Comment> resultCommentList2 = commentService.getComments(null, PageRequest.of(0,1));
+
+        Assertions.assertEquals(resultCommentList2.get(0).getMember().getMemberId(), "67890");
+        Assertions.assertEquals(resultCommentList.get(0).getMember().getMemberId(), "12345");
+
+        verify(commentRepository, times(1)).findAllByOrderByIdDesc(any(Pageable.class));
+        verify(commentRepository, times(1)).findByIdLessThanOrderByIdDesc(anyLong(), any(Pageable.class));
+    }
 }
