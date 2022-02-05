@@ -41,25 +41,25 @@ public class CommentServiceTest {
     @Test
     @DisplayName("saveComment() 테스트")
     void saveComment(){
-        Member member = Member.builder()
+        Member givenMember = Member.builder()
                 .socialId("12345")
                 .emoji("a")
                 .nickname("행복한 가짜광대")
                 .socialType("kakao")
                 .build();
 
-        Comment comment = Comment.builder()
+        Comment givenComment = Comment.builder()
                 .content(contentReader.checker("안녕하세요"))
                 .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
-                .member(member)
-                .nickname(member.getNickname())
+                .member(givenMember)
+                .nickname(givenMember.getNickname())
                 .deleted(Boolean.FALSE)
-                .emoji(member.getEmoji())
+                .emoji(givenMember.getEmoji())
                 .build();
 
-        given(commentRepository.save(comment)).willReturn(comment);
+        given(commentRepository.save(any(Comment.class))).willReturn(givenComment);
 
-        Comment savedComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(givenComment);
 
         Assertions.assertEquals(savedComment.getContent(), "안녕하세요");
         Assertions.assertEquals(savedComment.getBigScale(), "서울");
@@ -68,30 +68,30 @@ public class CommentServiceTest {
         Assertions.assertEquals(savedComment.getMember().getNickname(), "행복한 가짜광대");
         Assertions.assertEquals(savedComment.getDeleted(), Boolean.FALSE);
 
-        verify(commentRepository, times(1)).save(comment);
+        verify(commentRepository, times(1)).save(givenComment);
     }
 
     @Test
     @DisplayName("getComments() 테스트")
     void getComments() {
-        Member member = Member.builder()
+        Member givenMember = Member.builder()
                 .socialId("67890")
                 .emoji("b")
                 .nickname("우울한 진짜광대")
                 .socialType("apple")
                 .build();
 
-        Comment comment = Comment.builder()
+        Comment givenComment = Comment.builder()
                 .content(contentReader.checker("안녕하세요"))
                 .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
-                .member(member)
-                .nickname(member.getNickname())
+                .member(givenMember)
+                .nickname(givenMember.getNickname())
                 .deleted(Boolean.FALSE)
-                .emoji(member.getEmoji())
+                .emoji(givenMember.getEmoji())
                 .build();
 
         given(commentRepository.findAllByOrderByIdDesc(any(Pageable.class))).willReturn(List.of());
-        given(commentRepository.findByIdLessThanOrderByIdDesc(anyLong(), any(Pageable.class))).willReturn(List.of(comment));
+        given(commentRepository.findByIdLessThanOrderByIdDesc(anyLong(), any(Pageable.class))).willReturn(List.of(givenComment));
 
         List<Comment> commentListExist = commentService.getComments(1L, PageRequest.of(0,1));
         List<Comment> commentListNull = commentService.getComments(null, PageRequest.of(0,1));
