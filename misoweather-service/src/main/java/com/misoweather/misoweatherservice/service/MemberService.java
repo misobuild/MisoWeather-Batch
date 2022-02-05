@@ -50,6 +50,14 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoOAuth kakaoOAuth;
 
+    public String getBigScale(Member member){
+        return memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
+                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
+                .map(item -> item.getRegion().getBigScale())
+                .findFirst()
+                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+    }
+
     public NicknameResponseDto buildNickname() {
         // TODO RANDOM sql 사용하면 좋을 것 같다.
         Adjective adjective = adjectiveRepository.findById(getRandomId(adjectiveRepository.count()))

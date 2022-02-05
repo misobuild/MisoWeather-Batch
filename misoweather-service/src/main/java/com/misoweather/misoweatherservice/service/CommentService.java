@@ -24,16 +24,9 @@ public class CommentService {
     private static final int DEFAULT_SIZE = 21;
 
     private final CommentRepository commentRepository;
-    private final MemberRegionMappingRepository memberRegionMappingRepository;
     private final ContentReader contentReader;
 
-    public CommentRegisterResponseDto registerComment(CommentRegisterRequestDto commentRegisterRequestDto, Member member) {
-        String bigScale = memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
-                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
-                .map(item -> item.getRegion().getBigScale())
-                .findFirst()
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-
+    public void saveComment(CommentRegisterRequestDto commentRegisterRequestDto, Member member, String bigScale){
         Comment comment = Comment.builder()
                 .content(contentReader.checker(commentRegisterRequestDto.getContent()))
                 .bigScale(BigScaleEnum.getEnum(bigScale).toString())
@@ -42,9 +35,10 @@ public class CommentService {
                 .deleted(Boolean.FALSE)
                 .emoji(member.getEmoji())
                 .build();
-
         commentRepository.save(comment);
+    }
 
+    public CommentRegisterResponseDto getAllCommentList(){
         return CommentRegisterResponseDto.builder()
                 .commentList(commentRepository.findAll())
                 .build();
@@ -68,5 +62,4 @@ public class CommentService {
         if (id == null) return false;
         return this.commentRepository.existsByIdLessThan(id);
     }
-
 }
