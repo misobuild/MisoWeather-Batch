@@ -1,5 +1,6 @@
 package com.misoweather.misoweatherservice.service;
 
+import com.misoweather.misoweatherservice.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.comment.Comment;
@@ -27,6 +28,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentService 테스트")
@@ -42,13 +45,12 @@ public class CommentServiceTest {
     @BeforeEach
     void setUp(){
         this.contentReader = new ContentReader();
-//        this.commentService = new CommentService(commentRepository,memberRegionMappingRepository, contentReader);
-
     }
 
     @Test
-    @DisplayName("CommentService: registerComment() 테스트")
-    void registerCommentTest(){
+    @DisplayName("saveComment() 테스트")
+    void saveComment(){
+        String content = "안녕하세요";
         String bigScale = "서울특별시";
 
         Member member = Member.builder()
@@ -58,35 +60,60 @@ public class CommentServiceTest {
                 .socialType("kakao")
                 .build();
 
-        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-                .regionStatus(RegionEnum.DEFAULT)
-                .member(member)
-                .region(null)
-                .build();
-
         Comment comment = Comment.builder()
-                .content("We're happy in Misoweather")
-                .bigScale(bigScale)
+                .content(contentReader.checker(content))
+                .bigScale(BigScaleEnum.getEnum(bigScale).toString())
                 .member(member)
                 .nickname(member.getNickname())
                 .deleted(Boolean.FALSE)
                 .emoji(member.getEmoji())
                 .build();
 
-        List memberRegionMappingList = new ArrayList();
-        memberRegionMappingList.add(memberRegionMapping);
-        List bigScaleList = new ArrayList();
-        bigScaleList.add(memberRegionMapping);
-        List commentLIst = new ArrayList();
-        commentLIst.add(comment);
+        given(commentRepository.save(comment)).willReturn(comment);
 
-        given(memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
-        )
-                .willReturn(Stream.of(memberRegionMappingList));
+        Comment savedComment = commentRepository.save(comment);
 
+        Assertions.assertEquals(savedComment.getContent(), "안녕하세요");
+        Assertions.assertEquals(savedComment.getBigScale(), "서울");
+        Assertions.assertEquals(savedComment.getMember().getSocialId(), "12345");
+        Assertions.assertEquals(savedComment.getEmoji(), "a");
+        Assertions.assertEquals(savedComment.getMember().getNickname(), "행복한 가짜광대");
+        Assertions.assertEquals(savedComment.getDeleted(), Boolean.FALSE);
 
-        given(commentRepository.findAll())
-                .willReturn(commentLIst);
+        verify(commentRepository, times(1)).save(comment);
+    }
+
+//    @Test
+//    @DisplayName(("CommentService: 테스트")){
+//        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
+//                .regionStatus(RegionEnum.DEFAULT)
+//                .member(member)
+//                .region(null)
+//                .build();
+//
+//        Comment comment = Comment.builder()
+//                .content("We're happy in Misoweather")
+//                .bigScale(bigScale)
+//                .member(member)
+//                .nickname(member.getNickname())
+//                .deleted(Boolean.FALSE)
+//                .emoji(member.getEmoji())
+//                .build();
+//
+//        List memberRegionMappingList = new ArrayList();
+//        memberRegionMappingList.add(memberRegionMapping);
+//        List bigScaleList = new ArrayList();
+//        bigScaleList.add(memberRegionMapping);
+//        List commentLIst = new ArrayList();
+//        commentLIst.add(comment);
+//
+//        given(memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
+//        )
+//                .willReturn(Stream.of(memberRegionMappingList));
+//
+//
+//        given(commentRepository.findAll())
+//                .willReturn(commentLIst);
 
         // when
 //        final CommentRegisterResponseDto result = commentService
@@ -94,6 +121,6 @@ public class CommentServiceTest {
 
         // then
 //        Assertions.assertEquals(commentList.getCommentList().get(0).getContent(), "We're happy in Misoweather");
-    }
+//    }
 
 }
