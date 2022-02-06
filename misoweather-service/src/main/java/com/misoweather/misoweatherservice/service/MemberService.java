@@ -41,21 +41,19 @@ public class MemberService {
     // TODO 필드 생성자 추천하지 않음
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
-    private final MemberSurveyMappingRepository memberSurveyMappingRepository;
     private final RegionRepository regionRepository;
     private final AdjectiveRepository adjectiveRepository;
     private final AdverbRepository adverbRepository;
     private final EmojiRepository emojiRepository;
-    private final MemberRegionMappingRepository memberRegionMappingRepository;
+
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoOAuth kakaoOAuth;
 
-    public String getBigScale(Member member){
-        return memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
-                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
-                .map(item -> item.getRegion().getBigScale())
-                .findFirst()
+    public Member getMember(String socialId, String socialType){
+        Member member = memberRepository
+                .findBySocialIdAndSocialType(socialId, socialType)
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+        return member;
     }
 
     public NicknameResponseDto buildNickname() {
@@ -87,6 +85,7 @@ public class MemberService {
         memberRepository.findByNickname(signUpRequestDto.getNickname())
                 .ifPresent(m -> { throw new ApiCustomException(HttpStatusEnum.CONFLICT); });
 
+        // buildMember()
         Member member = Member.builder()
                 .socialId(signUpRequestDto.getSocialId())
                 .socialType(signUpRequestDto.getSocialType())
@@ -94,9 +93,11 @@ public class MemberService {
                 .nickname(signUpRequestDto.getNickname())
                 .build();
 
+        // getDefaultRegion()
         Region defaultRegion = regionRepository.findById(signUpRequestDto.getDefaultRegionId())
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
 
+        // buildMemberRegionMapping()
         MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
                 .regionStatus(RegionEnum.DEFAULT)
                 .member(member)
@@ -113,7 +114,6 @@ public class MemberService {
         Validator validator = ValidatorFactory
                 .of(loginRequestDto.getSocialId(), loginRequestDto.getSocialType(), socialToken);
         Boolean temp = validator.valid();
-        System.out.println(temp);
         if(temp.equals(Boolean.FALSE)) {
             throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
         }
@@ -126,19 +126,7 @@ public class MemberService {
                 .createToken(Long.toString(member.getMemberId()), member.getSocialId(), member.getSocialType());
     }
 
-    public void delete(DeleteMemberRequestDto deleteMemberRequestDto) {
-        Member member = memberRepository
-                .findBySocialIdAndSocialType(deleteMemberRequestDto.getSocialId(), deleteMemberRequestDto.getSocialType())
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-
-        // TODO 똑같이 member로 찾는데 명명법이 다르다.
-        List<MemberRegionMapping> memberRegionMappingList = memberRegionMappingRepository.findMemberRegionMappingByMember(member);
-        List<MemberSurveyMapping> memberSurveyMappingList = memberSurveyMappingRepository.findByMember(member);
-        List<Comment> commentList = commentRepository.findByMember(member);
-
-        commentRepository.deleteAll(commentList);
-        memberSurveyMappingRepository.deleteAll(memberSurveyMappingList);
-        memberRegionMappingRepository.deleteAll(memberRegionMappingList);
+    public void deleteMember(Member member) {
         memberRepository.delete(member);
     }
 
@@ -148,16 +136,26 @@ public class MemberService {
      *
      * @author yeon
     **/
-    public MemberInfoResponseDto getMemberInfo(Member member) {
-        List<MemberRegionMapping> memberRegionMappingList =
-                memberRegionMappingRepository.findMemberRegionMappingByMember(member);
+//    public MemberInfoResponseDto getMemberInfo(Member member) {
+//        List<MemberRegionMapping> memberRegionMappingList =
+//                memberRegionMappingRepository.findMemberRegionMappingByMember(member);
+//
+//        MemberRegionMapping memberRegionMapping = memberRegionMappingList.stream()
+//                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
+//                .findFirst()
+//                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+//
+//        return MemberInfoResponseDto.builder()
+//                .emoji(member.getEmoji())
+//                .nickname(member.getNickname())
+//                .regionId(memberRegionMapping.getRegion().getId())
+//                .regionName(BigScaleEnum
+//                        .getEnum(memberRegionMapping.getRegion().getBigScale()).toString())
+//                .build();
+//    }
 
-        MemberRegionMapping memberRegionMapping = memberRegionMappingList.stream()
-                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
-                .findFirst()
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-
-        return MemberInfoResponseDto.builder()
+    public MemberInfoResponseDto buildMemberInfoResponse(Member member, MemberRegionMapping memberRegionMapping){
+                return MemberInfoResponseDto.builder()
                 .emoji(member.getEmoji())
                 .nickname(member.getNickname())
                 .regionId(memberRegionMapping.getRegion().getId())
