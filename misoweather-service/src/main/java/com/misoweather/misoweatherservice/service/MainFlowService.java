@@ -1,23 +1,51 @@
 package com.misoweather.misoweatherservice.service;
 
+import com.misoweather.misoweatherservice.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
+import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.dto.request.comment.CommentRegisterRequestDto;
+import com.misoweather.misoweatherservice.dto.request.member.DeleteMemberRequestDto;
+import com.misoweather.misoweatherservice.dto.request.member.SignUpRequestDto;
 import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
+import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
+import com.misoweather.misoweatherservice.exception.ApiCustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MainFlowService {
 
     private final MemberService memberService;
+    private final MappingService mappingService;
     private final CommentService commentService;
     private final RegionService regionService;
     private final SurveyService surveyService;
 
+    public Member registerMember(SignUpRequestDto signUpRequestDto, String socialToken){
+
+    }
+
+    // 원래 memberService의 delete였음
+    public void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto){
+        Member member = memberService.getMember(deleteMemberRequestDto.getSocialId(), deleteMemberRequestDto.getSocialType());
+        memberService.deleteMember(member);
+        mappingService.deleteMemberSurvey(member);
+        mappingService.deleteMemberRegion(member);
+        commentService.deleteAll(member);
+    }
+
+    public MemberInfoResponseDto getMemberInfo(Member member){
+        List<MemberRegionMapping> memberRegionMappingList = mappingService.getMemberRegionMappingList(member);
+        MemberRegionMapping memberRegionMapping = mappingService.filterMemberRegionMappingList(memberRegionMappingList);
+        return memberService.buildMemberInfoResponse(member, memberRegionMapping);
+    }
+
     public CommentRegisterResponseDto registerComment(CommentRegisterRequestDto commentRegisterRequestDto, Member member){
-        String bigScale = memberService.getBigScale(member);
-        commentService.saveComment(commentRegisterRequestDto, member, bigScale);
+        String bigScale = mappingService.getBigScale(member);
+        commentService.saveComment(commentRegisterRequestDto.getContent(), member, bigScale);
         return commentService.getAllCommentList();
     }
 }
