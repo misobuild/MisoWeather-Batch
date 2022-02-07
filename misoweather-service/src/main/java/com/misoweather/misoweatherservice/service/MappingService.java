@@ -7,6 +7,7 @@ import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberReg
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
+import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.exception.ApiCustomException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class MappingService {
     private final MemberRegionMappingRepository memberRegionMappingRepository;
     private final MemberSurveyMappingRepository memberSurveyMappingRepository;
 
+    // MemberRegionMapping
     public String getBigScale(Member member) {
         return memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
                 .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
@@ -30,9 +32,18 @@ public class MappingService {
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
     }
 
-    public void deleteMemberSurvey(Member member) {
-        List<MemberSurveyMapping> memberSurveyMappingList = memberSurveyMappingRepository.findByMember(member);
-        memberSurveyMappingRepository.deleteAll(memberSurveyMappingList);
+    public List<MemberRegionMapping> getMemberRegionMappingList(Member member) {
+        return memberRegionMappingRepository.findMemberRegionMappingByMember(member);
+    }
+
+    public MemberRegionMapping buildMemberRegionMappingAndSave(Member member, Region region){
+        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
+                .regionStatus(RegionEnum.DEFAULT)
+                .member(member)
+                .region(region)
+                .build();
+
+        return memberRegionMappingRepository.save(memberRegionMapping);
     }
 
     public void deleteMemberRegion(Member member) {
@@ -40,14 +51,16 @@ public class MappingService {
         memberRegionMappingRepository.deleteAll(memberRegionMappingList);
     }
 
-    public List<MemberRegionMapping> getMemberRegionMappingList(Member member) {
-        return memberRegionMappingRepository.findMemberRegionMappingByMember(member);
-    }
-
     public MemberRegionMapping filterMemberRegionMappingList(List<MemberRegionMapping> rawList){
         return rawList.stream()
                 .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
                 .findFirst()
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+    }
+
+    // MemberSurveyMapping
+    public void deleteMemberSurvey(Member member) {
+        List<MemberSurveyMapping> memberSurveyMappingList = memberSurveyMappingRepository.findByMember(member);
+        memberSurveyMappingRepository.deleteAll(memberSurveyMappingList);
     }
 }
