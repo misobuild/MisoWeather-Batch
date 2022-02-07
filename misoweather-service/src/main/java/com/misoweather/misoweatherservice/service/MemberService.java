@@ -47,7 +47,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoOAuth kakaoOAuth;
 
-    public Member getMember(String socialId, String socialType){
+    public Member getMember(String socialId, String socialType) {
         Member member = memberRepository
                 .findBySocialIdAndSocialType(socialId, socialType)
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
@@ -110,7 +110,7 @@ public class MemberService {
 //        return registeredMember;
 //    }
 
-    public Member buildMemberAndSave(SignUpRequestDto signUpRequestDto){
+    public Member buildMemberAndSave(SignUpRequestDto signUpRequestDto) {
         Member member = Member.builder()
                 .socialId(signUpRequestDto.getSocialId())
                 .socialType(signUpRequestDto.getSocialType())
@@ -126,7 +126,7 @@ public class MemberService {
         Validator validator = ValidatorFactory
                 .of(loginRequestDto.getSocialId(), loginRequestDto.getSocialType(), socialToken);
         Boolean temp = validator.valid();
-        if(temp.equals(Boolean.FALSE)) {
+        if (temp.equals(Boolean.FALSE)) {
             throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
         }
 
@@ -138,8 +138,8 @@ public class MemberService {
                 .createToken(Long.toString(member.getMemberId()), member.getSocialId(), member.getSocialType());
     }
 
-    public MemberInfoResponseDto buildMemberInfoResponse(Member member, MemberRegionMapping memberRegionMapping){
-                return MemberInfoResponseDto.builder()
+    public MemberInfoResponseDto buildMemberInfoResponse(Member member, MemberRegionMapping memberRegionMapping) {
+        return MemberInfoResponseDto.builder()
                 .emoji(member.getEmoji())
                 .nickname(member.getNickname())
                 .regionId(memberRegionMapping.getRegion().getId())
@@ -156,8 +156,19 @@ public class MemberService {
         return Long.valueOf(randomNumber);
     }
 
-    public void checkToken(String socialId, String socialType, String socialToken){
+    public void checkToken(String socialId, String socialType, String socialToken) {
         Validator validator = ValidatorFactory.of(socialId, socialType, socialToken);
-        if(!validator.valid()) throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
+        if (!validator.valid()) throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
+    }
+
+    public void checkExistence(String socialId, String socialType, String nickname) {
+        memberRepository.findBySocialIdAndSocialType(socialId, socialType)
+                .ifPresent(m -> {
+                    throw new ApiCustomException(HttpStatusEnum.CONFLICT);
+                });
+        memberRepository.findByNickname(nickname)
+                .ifPresent(m -> {
+                    throw new ApiCustomException(HttpStatusEnum.CONFLICT);
+                });
     }
 }
