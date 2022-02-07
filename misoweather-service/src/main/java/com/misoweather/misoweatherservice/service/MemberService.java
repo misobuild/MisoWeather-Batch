@@ -39,9 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MemberService {
 
     // TODO 필드 생성자 추천하지 않음
-    private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
-    private final RegionRepository regionRepository;
     private final AdjectiveRepository adjectiveRepository;
     private final AdverbRepository adverbRepository;
     private final EmojiRepository emojiRepository;
@@ -73,19 +71,46 @@ public class MemberService {
                 .build();
     }
 
-    @Transactional
-    public Member registerMember(SignUpRequestDto signUpRequestDto, String socialToken) throws ParseException {
-        // TODO 애플의 경우 RSA 체크가 빠져있다.
-        Validator validator = ValidatorFactory
-                .of(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType(), socialToken);
-        if(!validator.valid()) throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
+//    @Transactional
+//    public Member registerMember(SignUpRequestDto signUpRequestDto, String socialToken) throws ParseException {
+////        // checkToken
+//        // TODO 애플의 경우 RSA 체크가 빠져있다.
+//        Validator validator = ValidatorFactory
+//                .of(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType(), socialToken);
+//        if(!validator.valid()) throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
+//
+//        memberRepository.findBySocialIdAndSocialType(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType())
+//                .ifPresent(m -> { throw new ApiCustomException(HttpStatusEnum.CONFLICT); });
+//        memberRepository.findByNickname(signUpRequestDto.getNickname())
+//                .ifPresent(m -> { throw new ApiCustomException(HttpStatusEnum.CONFLICT); });
 
-        memberRepository.findBySocialIdAndSocialType(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType())
-                .ifPresent(m -> { throw new ApiCustomException(HttpStatusEnum.CONFLICT); });
-        memberRepository.findByNickname(signUpRequestDto.getNickname())
-                .ifPresent(m -> { throw new ApiCustomException(HttpStatusEnum.CONFLICT); });
+//        // buildMember()
+//        Member member = Member.builder()
+//                .socialId(signUpRequestDto.getSocialId())
+//                .socialType(signUpRequestDto.getSocialType())
+//                .emoji(signUpRequestDto.getEmoji())
+//                .nickname(signUpRequestDto.getNickname())
+//                .build();
 
-        // buildMember()
+//        // getDefaultRegion()
+//        Region defaultRegion = regionRepository.findById(signUpRequestDto.getDefaultRegionId())
+//                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+
+//        // buildMemberRegionMapping()
+//        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
+//                .regionStatus(RegionEnum.DEFAULT)
+//                .member(member)
+//                .region(defaultRegion)
+//                .build();
+//
+//        Member registeredMember = memberRepository.save(member);
+
+//        // MappingService: saveMemberRegionMapping()
+//        memberRegionMappingRepository.save(memberRegionMapping);
+//        return registeredMember;
+//    }
+
+    public Member buildMemberAndSave(SignUpRequestDto signUpRequestDto){
         Member member = Member.builder()
                 .socialId(signUpRequestDto.getSocialId())
                 .socialType(signUpRequestDto.getSocialType())
@@ -93,24 +118,11 @@ public class MemberService {
                 .nickname(signUpRequestDto.getNickname())
                 .build();
 
-        // getDefaultRegion()
-        Region defaultRegion = regionRepository.findById(signUpRequestDto.getDefaultRegionId())
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-
-        // buildMemberRegionMapping()
-        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-                .regionStatus(RegionEnum.DEFAULT)
-                .member(member)
-                .region(defaultRegion)
-                .build();
-
-        Member registeredMember = memberRepository.save(member);
-        memberRegionMappingRepository.save(memberRegionMapping);
-
-        return registeredMember;
+        return memberRepository.save(member);
     }
 
     public String reissue(LoginRequestDto loginRequestDto, String socialToken) {
+        // checkMember
         Validator validator = ValidatorFactory
                 .of(loginRequestDto.getSocialId(), loginRequestDto.getSocialType(), socialToken);
         Boolean temp = validator.valid();
@@ -125,34 +137,6 @@ public class MemberService {
         return jwtTokenProvider
                 .createToken(Long.toString(member.getMemberId()), member.getSocialId(), member.getSocialType());
     }
-
-    public void deleteMember(Member member) {
-        memberRepository.delete(member);
-    }
-
-    // TODO 사용하지 않는 함수 정리
-    /**
-     * 사용하지 않는 함수 정리할 것
-     *
-     * @author yeon
-    **/
-//    public MemberInfoResponseDto getMemberInfo(Member member) {
-//        List<MemberRegionMapping> memberRegionMappingList =
-//                memberRegionMappingRepository.findMemberRegionMappingByMember(member);
-//
-//        MemberRegionMapping memberRegionMapping = memberRegionMappingList.stream()
-//                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
-//                .findFirst()
-//                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-//
-//        return MemberInfoResponseDto.builder()
-//                .emoji(member.getEmoji())
-//                .nickname(member.getNickname())
-//                .regionId(memberRegionMapping.getRegion().getId())
-//                .regionName(BigScaleEnum
-//                        .getEnum(memberRegionMapping.getRegion().getBigScale()).toString())
-//                .build();
-//    }
 
     public MemberInfoResponseDto buildMemberInfoResponse(Member member, MemberRegionMapping memberRegionMapping){
                 return MemberInfoResponseDto.builder()
@@ -172,27 +156,8 @@ public class MemberService {
         return Long.valueOf(randomNumber);
     }
 
-
-    // TODO Deprecated 할 것인지 말 것인지 정리하기
-    public Boolean ifMemberExist(String socialId, String socialType) {
-//        try {
-//            Logger logger = LoggerFactory.getLogger(this.getClass());
-//            for(String item : socialType.split(",")){
-//                System.out.println(item);
-//            }
-//            logger.info("user: {}", socialType.split(",")[0]);
-//            logger.info("authCode: {}", socialType.split(",")[1]);
-//            logger.info("identityToken: {}", socialType.split(",")[2]);
-//            logger.info("identityToken: {}", socialType.split(",")[3]);
-//        } catch (Exception e) {
-//            throw new ApiCustomException(HttpStatusEnum.CONFLICT);
-//        }
-
-        return memberRepository.findBySocialIdAndSocialType(socialId, socialType).isPresent();
+    public void checkToken(String socialId, String socialType, String socialToken){
+        Validator validator = ValidatorFactory.of(socialId, socialType, socialToken);
+        if(!validator.valid()) throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
     }
-
-//    public <T extends JpaRepository> void findbyId(T repository) throws Throwable {
-//        System.out.println(repository.findById(idCreator.getRandomId(repository.count()))
-//                .orElseThrow(() -> new ApiException(HttpStatusEnum.NOT_FOUND)));
-//    }
 }
