@@ -27,10 +27,14 @@ public class RegionService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RegionReader regionReader;
 
+    public Region getRegion(Long regionId){
+        return regionRepository.findById(regionId)
+                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+    }
+
     public RegionResponseDto getMidScaleList(String regionName) {
         String bigScale = BigScaleEnum.valueOf(regionName).getValue();
         List<Region> rawMidScaleList = regionRepository.findByBigScale(bigScale);
-
         return RegionResponseDto.builder()
                 .midScaleList(regionReader.filterMidScaleList(rawMidScaleList))
                 .build();
@@ -38,12 +42,12 @@ public class RegionService {
 
     public RegionResponseDto getSmallScaleList(String bigScale, String midScale) {
         List<Region> rawSmallScaleList = regionRepository.findByBigScaleAndMidScale(bigScale, midScale);
-
         return RegionResponseDto.builder()
                 .midScaleList(rawSmallScaleList)
                 .build();
     }
 
+    // updateRegionBefore
     @Transactional
     public MemberRegionMapping updateRegion(Member member, Long regionId) {
         Region updateRegion = regionRepository.findById(regionId)
@@ -55,4 +59,7 @@ public class RegionService {
                 .map(item -> item.update(updateRegion))
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.CONFLICT));
     }
+
+    // updateRegionAfter 50번째 줄에 있는 memberRegionMapping
+    public
 }
