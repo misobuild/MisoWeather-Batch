@@ -4,19 +4,10 @@ import com.misoweather.misoweatherservice.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.auth.KakaoOAuth;
 import com.misoweather.misoweatherservice.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.constants.HttpStatusEnum;
-import com.misoweather.misoweatherservice.constants.RegionEnum;
-import com.misoweather.misoweatherservice.domain.comment.Comment;
-import com.misoweather.misoweatherservice.domain.comment.CommentRepository;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member.MemberRepository;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
-import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
-import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
-import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
 import com.misoweather.misoweatherservice.domain.nickname.*;
-import com.misoweather.misoweatherservice.domain.region.Region;
-import com.misoweather.misoweatherservice.domain.region.RegionRepository;
-import com.misoweather.misoweatherservice.dto.request.member.DeleteMemberRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.LoginRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.SignUpRequestDto;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
@@ -27,10 +18,6 @@ import com.misoweather.misoweatherservice.utils.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.text.ParseException;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
@@ -43,9 +30,7 @@ public class MemberService {
     private final AdjectiveRepository adjectiveRepository;
     private final AdverbRepository adverbRepository;
     private final EmojiRepository emojiRepository;
-
     private final JwtTokenProvider jwtTokenProvider;
-    private final KakaoOAuth kakaoOAuth;
 
     public Member getMember(String socialId, String socialType) {
         Member member = memberRepository
@@ -70,45 +55,6 @@ public class MemberService {
                 .emoji(emoji.getEmoji())
                 .build();
     }
-
-//    @Transactional
-//    public Member registerMember(SignUpRequestDto signUpRequestDto, String socialToken) throws ParseException {
-////        // checkToken
-//        // TODO 애플의 경우 RSA 체크가 빠져있다.
-//        Validator validator = ValidatorFactory
-//                .of(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType(), socialToken);
-//        if(!validator.valid()) throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
-//
-//        memberRepository.findBySocialIdAndSocialType(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType())
-//                .ifPresent(m -> { throw new ApiCustomException(HttpStatusEnum.CONFLICT); });
-//        memberRepository.findByNickname(signUpRequestDto.getNickname())
-//                .ifPresent(m -> { throw new ApiCustomException(HttpStatusEnum.CONFLICT); });
-
-//        // buildMember()
-//        Member member = Member.builder()
-//                .socialId(signUpRequestDto.getSocialId())
-//                .socialType(signUpRequestDto.getSocialType())
-//                .emoji(signUpRequestDto.getEmoji())
-//                .nickname(signUpRequestDto.getNickname())
-//                .build();
-
-//        // getDefaultRegion()
-//        Region defaultRegion = regionRepository.findById(signUpRequestDto.getDefaultRegionId())
-//                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-
-//        // buildMemberRegionMapping()
-//        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-//                .regionStatus(RegionEnum.DEFAULT)
-//                .member(member)
-//                .region(defaultRegion)
-//                .build();
-//
-//        Member registeredMember = memberRepository.save(member);
-
-//        // MappingService: saveMemberRegionMapping()
-//        memberRegionMappingRepository.save(memberRegionMapping);
-//        return registeredMember;
-//    }
 
     public Member buildMemberAndSave(SignUpRequestDto signUpRequestDto) {
         Member member = Member.builder()
@@ -170,5 +116,10 @@ public class MemberService {
                 .ifPresent(m -> {
                     throw new ApiCustomException(HttpStatusEnum.CONFLICT);
                 });
+    }
+
+
+    public void deleteMember(Member member) {
+        memberRepository.delete(member);
     }
 }
