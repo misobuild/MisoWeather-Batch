@@ -118,6 +118,10 @@ public class MemberService {
                 });
     }
 
+    public String createToken(Member member){
+        return jwtTokenProvider
+                .createToken(Long.toString(member.getMemberId()), member.getSocialId(), member.getSocialType());
+    }
 
     public void deleteMember(Member member) {
         memberRepository.delete(member);
