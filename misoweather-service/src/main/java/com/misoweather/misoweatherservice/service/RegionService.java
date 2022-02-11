@@ -23,8 +23,6 @@ import java.util.List;
 public class RegionService {
 
     private final RegionRepository regionRepository;
-    private final MemberRegionMappingRepository memberRegionMappingRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final RegionReader regionReader;
 
     public Region getRegion(Long regionId){
@@ -47,19 +45,12 @@ public class RegionService {
                 .build();
     }
 
-    // updateRegionBefore
-    @Transactional
-    public MemberRegionMapping updateRegion(Member member, Long regionId) {
-        Region updateRegion = regionRepository.findById(regionId)
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-        List<MemberRegionMapping> memberRegionMapping = memberRegionMappingRepository.findMemberRegionMappingByMember(member);
-        return memberRegionMapping.stream()
+    // updateRegionAfter 50번째 줄에 있는 memberRegionMapping
+    public MemberRegionMapping updateRegion(List<MemberRegionMapping> memberRegionMappingList, Region targetRegion){
+        return memberRegionMappingList.stream()
                 .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
                 .findFirst()
-                .map(item -> item.update(updateRegion))
+                .map(item -> item.update(targetRegion))
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.CONFLICT));
     }
-
-    // updateRegionAfter 50번째 줄에 있는 memberRegionMapping
-    public
 }

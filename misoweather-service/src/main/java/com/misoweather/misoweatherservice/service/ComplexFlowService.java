@@ -6,6 +6,7 @@ import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberReg
 import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.dto.request.comment.CommentRegisterRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.DeleteMemberRequestDto;
+import com.misoweather.misoweatherservice.dto.request.member.LoginRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.SignUpRequestDto;
 import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
@@ -28,6 +29,7 @@ public class MainFlowService {
     private final RegionService regionService;
     private final SurveyService surveyService;
 
+    // MemberService
     @Transactional
     public Member registerMember(SignUpRequestDto signUpRequestDto, String socialToken){
         memberService.checkToken(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType(), socialToken);
@@ -38,7 +40,6 @@ public class MainFlowService {
         return registeredMember;
     }
 
-    // 원래 memberService의 delete였음
     public void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto){
         Member member = memberService.getMember(deleteMemberRequestDto.getSocialId(), deleteMemberRequestDto.getSocialType());
         memberService.deleteMember(member);
@@ -53,9 +54,24 @@ public class MainFlowService {
         return memberService.buildMemberInfoResponse(member, memberRegionMapping);
     }
 
+    public String reissue(LoginRequestDto loginRequestDto, String socialToken){
+        memberService.checkToken(loginRequestDto.getSocialId(), loginRequestDto.getSocialType(), socialToken);
+        Member member = memberService.getMember(loginRequestDto.getSocialId(), loginRequestDto.getSocialType());
+        return memberService.createToken(member);
+    }
+
+    // CommentService
     public CommentRegisterResponseDto registerComment(CommentRegisterRequestDto commentRegisterRequestDto, Member member){
         String bigScale = mappingService.getBigScale(member);
         commentService.saveComment(commentRegisterRequestDto.getContent(), member, bigScale);
         return commentService.getAllCommentList();
+    }
+
+    // RegionService
+    @org.springframework.transaction.annotation.Transactional
+    public MemberRegionMapping updateRegion(Member member, Long regionId){
+        Region targetRegion = regionService.getRegion(regionId);
+        List<MemberRegionMapping> memberRegionMappingList = mappingService.getMemberRegionMappingList(member);
+        return regionService.updateRegion(memberRegionMappingList, targetRegion);
     }
 }
