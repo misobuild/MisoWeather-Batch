@@ -15,13 +15,13 @@ import com.misoweather.misoweatherservice.utils.factory.ValidatorFactory;
 import com.misoweather.misoweatherservice.utils.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MainFlowService {
+public class ComplexFlowService {
 
     private final MemberService memberService;
     private final MappingService mappingService;
@@ -68,7 +68,7 @@ public class MainFlowService {
     }
 
     // RegionService
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public MemberRegionMapping updateRegion(Member member, Long regionId){
         Region targetRegion = regionService.getRegion(regionId);
         List<MemberRegionMapping> memberRegionMappingList = mappingService.getMemberRegionMappingList(member);
