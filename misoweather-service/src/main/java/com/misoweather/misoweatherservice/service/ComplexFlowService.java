@@ -1,18 +1,19 @@
 package com.misoweather.misoweatherservice.service;
 
-import com.misoweather.misoweatherservice.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
+import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.region.Region;
+import com.misoweather.misoweatherservice.domain.survey.Answer;
+import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.dto.request.comment.CommentRegisterRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.DeleteMemberRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.LoginRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.SignUpRequestDto;
+import com.misoweather.misoweatherservice.dto.request.survey.AnswerSurveyDto;
 import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
-import com.misoweather.misoweatherservice.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.utils.factory.ValidatorFactory;
-import com.misoweather.misoweatherservice.utils.validator.Validator;
+import com.misoweather.misoweatherservice.dto.response.survey.AnswerSurveyResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,4 +75,18 @@ public class ComplexFlowService {
         List<MemberRegionMapping> memberRegionMappingList = mappingService.getMemberRegionMappingList(member);
         return regionService.updateRegion(memberRegionMappingList, targetRegion);
     }
+
+    // SurveyService
+    public AnswerSurveyResponseDto answerSurvey(Member member, AnswerSurveyDto answerSurveyDto){
+        Answer answer = surveyService.getAnswer(answerSurveyDto);
+        Survey survey = surveyService.getSurvey(answerSurveyDto);
+        surveyService.checkAnswerAndSurvey(answer, survey);
+        List<MemberSurveyMapping> memberSurveyMappingList = surveyService.filterMemberSurveyMappingList(member, survey);
+        surveyService.checkMemberSurveyMappingList(memberSurveyMappingList);
+        MemberSurveyMapping memberSurveyMapping = surveyService.buildMemberSurveyMapping(member, answer, survey, answerSurveyDto);
+        surveyService.saveMemberSurveyMapping(memberSurveyMapping);
+        return surveyService.buildAnswerSurveyResponseDto(answer, survey);
+    }
+
+
 }
