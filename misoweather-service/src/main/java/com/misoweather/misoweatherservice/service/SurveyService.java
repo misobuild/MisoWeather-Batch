@@ -186,4 +186,9 @@ public class SurveyService {
                 .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
                 .collect(Collectors.toList());
     }
+
+
+    public void checkMemberSurveyMappingList(List<MemberSurveyMapping> memberSurveyMappingList){
+        if (!memberSurveyMappingList.isEmpty()) throw new ApiCustomException(HttpStatusEnum.CONFLICT);
+    }
 }
