@@ -197,4 +197,8 @@ public class SurveyService {
                 .shortBigScale(answerSurveyDto.getShortBigScale())
                 .build();
     }
+
+    public MemberSurveyMapping saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping){
+        return memberSurveyMappingRepository.save(memberSurveyMapping);
+    }
 }
