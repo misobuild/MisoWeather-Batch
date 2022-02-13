@@ -166,4 +166,11 @@ public class SurveyService {
         return answerRepository.findById(answerSurveyDto.getAnswerId())
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
     }
+
+
+    public Survey getSurvey(AnswerSurveyDto answerSurveyDto){
+        return surveyRepository.findById(answerSurveyDto.getSurveyId())
+                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+    }
+
 }
