@@ -177,4 +177,13 @@ public class SurveyService {
         if (!answer.getSurvey().getId().equals(survey.getId())){
             throw new ApiCustomException(HttpStatusEnum.CONFLICT); }
     }
+
+    // 얘는 MappingService로 옮겨야겠다.
+    public List<MemberSurveyMapping> filterMemberSurveyMappingList(Member member, Survey survey){
+        return memberSurveyMappingRepository.findByMemberAndSurvey(member, survey).stream()
+                .filter(item -> item.getCreatedAt().getYear() == LocalDate.now().getYear())
+                .filter(item -> item.getCreatedAt().getMonth() == LocalDate.now().getMonth())
+                .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
+                .collect(Collectors.toList());
+    }
 }
