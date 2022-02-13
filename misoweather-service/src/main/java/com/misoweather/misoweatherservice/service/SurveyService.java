@@ -31,44 +31,49 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SurveyService {
-
+    // 조회와 행위(TrueFalse 판단이나 상태를 바꾸는 것)를 분리하자
     private final MemberSurveyMappingRepository memberSurveyMappingRepository;
     private final SurveyRepository surveyRepository;
     private final AnswerRepository answerRepository;
 
-
     public ListDto<AnswerSurveyJoinDto> getAnswerList(Long surveyId) {
-        // List<Answer> answerList = answerRepository.findAllBySurveyId(surveyId);
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
         List<AnswerSurveyJoinDto> answerSurveyJoinList = answerRepository.findAnswerSurveyJoinBySurveyId(surveyId);
         if (answerSurveyJoinList.isEmpty()) throw new ApiCustomException(HttpStatusEnum.NOT_FOUND);
         return ListDto.<AnswerSurveyJoinDto>builder().responseList(answerSurveyJoinList).build();
     }
 
     public AnswerSurveyResponseDto answerSurvey(Member member, AnswerSurveyDto answerSurveyDto) {
+        //Repository
         Answer answer = answerRepository.findById(answerSurveyDto.getAnswerId())
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
         Survey survey = surveyRepository.findById(answerSurveyDto.getSurveyId())
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
 
+        // Check ifValid
         if (!answer.getSurvey().getId().equals(survey.getId())){
             throw new ApiCustomException(HttpStatusEnum.CONFLICT);
         }
 
+        // Find member-servey matching
         List<MemberSurveyMapping> memberSurveyMappingList = memberSurveyMappingRepository.findByMemberAndSurvey(member, survey).stream()
                 .filter(item -> item.getCreatedAt().getYear() == LocalDate.now().getYear())
                 .filter(item -> item.getCreatedAt().getMonth() == LocalDate.now().getMonth())
                 .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
                 .collect(Collectors.toList());
 
+        // Check member-survey matching valid
         if (!memberSurveyMappingList.isEmpty()) throw new ApiCustomException(HttpStatusEnum.CONFLICT);
 
+        // build MemberSurveyMapping
         MemberSurveyMapping memberSurveyMapping = MemberSurveyMapping.builder()
                 .member(member).answer(answer).survey(survey)
                 .shortBigScale(answerSurveyDto.getShortBigScale())
                 .build();
 
+        // Save MemberSurveyMapping
         memberSurveyMappingRepository.save(memberSurveyMapping);
+
+        // return savedMemberSurveyMatching
         return AnswerSurveyResponseDto.builder()
                 .surveyDescription(survey.getDescription())
                 .answer(answer.getAnswer())
@@ -76,17 +81,18 @@ public class SurveyService {
     }
 
     public ListDto<AnswerStatusDto> getAnswerStatus(Member member) {
+        // Find SurveyIdList
         List<Long> surveyIdList = surveyRepository.findAll().stream()
                 .map(item -> item.getId())
                 .collect(Collectors.toList());
         log.info("surveyList are: {}", surveyIdList);
 
+        //
         // TODO jpa isAfter 지원하니 filter 필요없다. 속도는 누가 더 빠를까?
         List<AnswerStatusDto> answerStatusDtoList = memberSurveyMappingRepository.findByMember(member)
                 .stream()
                 .filter(item ->
-                        item.getCreatedAt()
-                                .isAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59))))
+                        item.getCreatedAt().isAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59))))
                 .map(item -> {
                     // TODO db 배열 순서가 달라질 경우 리스트 인덱스가 달라지므로 문제가 생길 수 있다.
                     surveyIdList.remove(item.getSurvey().getId());
@@ -155,4 +161,9 @@ public class SurveyService {
         return !candidateList.isEmpty();
     }
 
+    // AnswerSurvey 분리
+    public Answer getAnswer(AnswerSurveyDto answerSurveyDto){
+        return answerRepository.findById(answerSurveyDto.getAnswerId())
+                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+    }
 }
