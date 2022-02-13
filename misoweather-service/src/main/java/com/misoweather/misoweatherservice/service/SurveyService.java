@@ -187,8 +187,14 @@ public class SurveyService {
                 .collect(Collectors.toList());
     }
 
-
     public void checkMemberSurveyMappingList(List<MemberSurveyMapping> memberSurveyMappingList){
         if (!memberSurveyMappingList.isEmpty()) throw new ApiCustomException(HttpStatusEnum.CONFLICT);
+    }
+
+    public MemberSurveyMapping buildMemberSurveyMapping(Member member, Answer answer, Survey survey, AnswerSurveyDto answerSurveyDto){
+        return MemberSurveyMapping.builder()
+                .member(member).answer(answer).survey(survey)
+                .shortBigScale(answerSurveyDto.getShortBigScale())
+                .build();
     }
 }
