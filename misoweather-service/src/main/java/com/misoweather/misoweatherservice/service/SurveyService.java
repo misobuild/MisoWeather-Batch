@@ -201,4 +201,11 @@ public class SurveyService {
     public MemberSurveyMapping saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping){
         return memberSurveyMappingRepository.save(memberSurveyMapping);
     }
+
+    public AnswerSurveyResponseDto buildAnswerSurveyResponseDto(Answer answer, Survey survey){
+        return AnswerSurveyResponseDto.builder()
+                .surveyDescription(survey.getDescription())
+                .answer(answer.getAnswer())
+                .build();
+    }
 }
