@@ -173,4 +173,8 @@ public class SurveyService {
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
     }
 
+    public void checkAnswerAndSurvey(Answer answer, Survey survey){
+        if (!answer.getSurvey().getId().equals(survey.getId())){
+            throw new ApiCustomException(HttpStatusEnum.CONFLICT); }
+    }
 }
