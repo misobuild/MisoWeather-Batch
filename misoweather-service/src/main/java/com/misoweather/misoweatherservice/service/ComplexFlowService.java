@@ -81,7 +81,7 @@ public class ComplexFlowService {
         Answer answer = surveyService.getAnswer(answerSurveyDto);
         Survey survey = surveyService.getSurvey(answerSurveyDto);
         surveyService.checkAnswerAndSurvey(answer, survey);
-        List<MemberSurveyMapping> memberSurveyMappingList = surveyService.filterMemberSurveyMappingList(member, survey);
+        List<MemberSurveyMapping> memberSurveyMappingList = mappingService.filterMemberSurveyMappingList(member, survey);
         surveyService.checkMemberSurveyMappingList(memberSurveyMappingList);
         MemberSurveyMapping memberSurveyMapping = surveyService.buildMemberSurveyMapping(member, answer, survey, answerSurveyDto);
         surveyService.saveMemberSurveyMapping(memberSurveyMapping);
