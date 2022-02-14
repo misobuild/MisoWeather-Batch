@@ -42,44 +42,6 @@ public class SurveyService {
         return ListDto.<AnswerSurveyJoinDto>builder().responseList(answerSurveyJoinList).build();
     }
 
-    public AnswerSurveyResponseDto answerSurvey(Member member, AnswerSurveyDto answerSurveyDto) {
-        //Repository
-        Answer answer = answerRepository.findById(answerSurveyDto.getAnswerId())
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-        Survey survey = surveyRepository.findById(answerSurveyDto.getSurveyId())
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-
-        // Check ifValid
-        if (!answer.getSurvey().getId().equals(survey.getId())){
-            throw new ApiCustomException(HttpStatusEnum.CONFLICT);
-        }
-
-        // Find member-servey matching
-        List<MemberSurveyMapping> memberSurveyMappingList = memberSurveyMappingRepository.findByMemberAndSurvey(member, survey).stream()
-                .filter(item -> item.getCreatedAt().getYear() == LocalDate.now().getYear())
-                .filter(item -> item.getCreatedAt().getMonth() == LocalDate.now().getMonth())
-                .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
-                .collect(Collectors.toList());
-
-        // Check member-survey matching valid
-        if (!memberSurveyMappingList.isEmpty()) throw new ApiCustomException(HttpStatusEnum.CONFLICT);
-
-        // build MemberSurveyMapping
-        MemberSurveyMapping memberSurveyMapping = MemberSurveyMapping.builder()
-                .member(member).answer(answer).survey(survey)
-                .shortBigScale(answerSurveyDto.getShortBigScale())
-                .build();
-
-        // Save MemberSurveyMapping
-        memberSurveyMappingRepository.save(memberSurveyMapping);
-
-        // return savedMemberSurveyMatching
-        return AnswerSurveyResponseDto.builder()
-                .surveyDescription(survey.getDescription())
-                .answer(answer.getAnswer())
-                .build();
-    }
-
     public ListDto<AnswerStatusDto> getAnswerStatus(Member member) {
         // Find SurveyIdList
         List<Long> surveyIdList = surveyRepository.findAll().stream()
@@ -176,15 +138,6 @@ public class SurveyService {
     public void checkAnswerAndSurvey(Answer answer, Survey survey){
         if (!answer.getSurvey().getId().equals(survey.getId())){
             throw new ApiCustomException(HttpStatusEnum.CONFLICT); }
-    }
-
-    // 얘는 MappingService로 옮겨야겠다.
-    public List<MemberSurveyMapping> filterMemberSurveyMappingList(Member member, Survey survey){
-        return memberSurveyMappingRepository.findByMemberAndSurvey(member, survey).stream()
-                .filter(item -> item.getCreatedAt().getYear() == LocalDate.now().getYear())
-                .filter(item -> item.getCreatedAt().getMonth() == LocalDate.now().getMonth())
-                .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
-                .collect(Collectors.toList());
     }
 
     public void checkMemberSurveyMappingList(List<MemberSurveyMapping> memberSurveyMappingList){
