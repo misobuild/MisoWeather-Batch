@@ -8,13 +8,16 @@ import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberReg
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
 import com.misoweather.misoweatherservice.domain.region.Region;
+import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.exception.ApiCustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -62,5 +65,13 @@ public class MappingService {
     public void deleteMemberSurvey(Member member) {
         List<MemberSurveyMapping> memberSurveyMappingList = memberSurveyMappingRepository.findByMember(member);
         memberSurveyMappingRepository.deleteAll(memberSurveyMappingList);
+    }
+
+    public List<MemberSurveyMapping> filterMemberSurveyMappingList(Member member, Survey survey){
+        return memberSurveyMappingRepository.findByMemberAndSurvey(member, survey).stream()
+                .filter(item -> item.getCreatedAt().getYear() == LocalDate.now().getYear())
+                .filter(item -> item.getCreatedAt().getMonth() == LocalDate.now().getMonth())
+                .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
+                .collect(Collectors.toList());
     }
 }
