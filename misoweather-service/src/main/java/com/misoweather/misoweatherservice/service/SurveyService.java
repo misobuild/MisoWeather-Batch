@@ -123,7 +123,6 @@ public class SurveyService {
         return !candidateList.isEmpty();
     }
 
-    // AnswerSurvey 분리
     public Answer getAnswer(AnswerSurveyDto answerSurveyDto){
         return answerRepository.findById(answerSurveyDto.getAnswerId())
                 .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
@@ -151,8 +150,8 @@ public class SurveyService {
                 .build();
     }
 
-    public MemberSurveyMapping saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping){
-        return memberSurveyMappingRepository.save(memberSurveyMapping);
+    public void saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping){
+        memberSurveyMappingRepository.save(memberSurveyMapping);
     }
 
     public AnswerSurveyResponseDto buildAnswerSurveyResponseDto(Answer answer, Survey survey){
