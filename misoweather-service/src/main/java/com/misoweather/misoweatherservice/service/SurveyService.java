@@ -43,13 +43,13 @@ public class SurveyService {
     }
 
     public ListDto<AnswerStatusDto> getAnswerStatus(Member member) {
-        // Find SurveyIdList
+        // FindAll SurveyIdList
         List<Long> surveyIdList = surveyRepository.findAll().stream()
                 .map(item -> item.getId())
                 .collect(Collectors.toList());
         log.info("surveyList are: {}", surveyIdList);
 
-        //
+        // filterMemberSurveyMapping
         // TODO jpa isAfter 지원하니 filter 필요없다. 속도는 누가 더 빠를까?
         List<AnswerStatusDto> answerStatusDtoList = memberSurveyMappingRepository.findByMember(member)
                 .stream()
@@ -77,6 +77,12 @@ public class SurveyService {
         answerStatusDtoList.sort(Comparator.comparing(AnswerStatusDto::getSurveyId));
 
         return ListDto.<AnswerStatusDto>builder().responseList(answerStatusDtoList).build();
+    }
+
+    public List<Long> getAllSurveyId(){
+        return surveyRepository.findAll().stream()
+                .map(item -> item.getId())
+                .collect(Collectors.toList());
     }
 
     public ListDto<SurveyReader> getSurveyResultList(String shortBigScale) {
