@@ -109,6 +109,10 @@ public class SurveyService {
                 .collect(Collectors.toList());
     }
 
+    public ListDto<AnswerStatusDto> buildAnswerStatusResponseDtoList(List<AnswerStatusDto> answerStatusDtoList){
+        return ListDto.<AnswerStatusDto>builder().responseList(answerStatusDtoList).build();
+    }
+
     public ListDto<SurveyReader> getSurveyResultList(String shortBigScale) {
         List<SurveyReader> surveyReaderList = new ArrayList<>();
 
