@@ -11,13 +11,16 @@ import com.misoweather.misoweatherservice.dto.request.member.DeleteMemberRequest
 import com.misoweather.misoweatherservice.dto.request.member.LoginRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.SignUpRequestDto;
 import com.misoweather.misoweatherservice.dto.request.survey.AnswerSurveyDto;
+import com.misoweather.misoweatherservice.dto.response.ListDto;
 import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
+import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
 import com.misoweather.misoweatherservice.dto.response.survey.AnswerSurveyResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -86,6 +89,17 @@ public class ComplexFlowService {
         MemberSurveyMapping memberSurveyMapping = surveyService.buildMemberSurveyMapping(member, answer, survey, answerSurveyDto);
         surveyService.saveMemberSurveyMapping(memberSurveyMapping);
         return surveyService.buildAnswerSurveyResponseDto(answer, survey);
+    }
+
+    public ListDto<AnswerStatusDto> getAnswerStatus(Member member){
+        List<Long> surveyIdList = surveyService.getAllSurveyId();
+        List<AnswerStatusDto> answerStatusDtoList = surveyService.buildFromFilteredMemberSurveyMappingList(member, surveyIdList);
+        List<AnswerStatusDto> nullStatusDtoList = surveyService.buildAnswerStatusNullDtoList(surveyIdList);
+
+        answerStatusDtoList.addAll(nullStatusDtoList);
+        answerStatusDtoList.sort(Comparator.comparing(AnswerStatusDto::getSurveyId));
+
+        return surveyService.buildAnswerStatusResponseDtoList(answerStatusDtoList);
     }
 
 
