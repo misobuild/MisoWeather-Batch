@@ -179,5 +179,21 @@ public class SurveyService {
         return resultSurveyList;
     }
 
+    public List<SurveyReader> getSurveyReaderMatchesIdList(List<MemberSurveyMapping> surveyMatchesBigScaleList){
+        List<SurveyReader> surveyReaderList = new ArrayList<>();
+        List<Survey> totalSurveyList = surveyRepository.findAll();
 
+        for (Survey survey : totalSurveyList) {
+            List<MemberSurveyMapping> conditionedSurveyList = surveyMatchesBigScaleList.stream()
+                    .filter(item -> item.getSurvey().getId().equals(survey.getId()))
+                    .collect(Collectors.toList());
+            surveyReaderList.add(SurveyReader.builder()
+                    .surveyId(survey.getId())
+                    .surveyTitle(survey.getTitle())
+                    .surveyDescription(survey.getDescription())
+                    .msmList(conditionedSurveyList).build());
+        }
+
+        return surveyReaderList;
+    }
 }
