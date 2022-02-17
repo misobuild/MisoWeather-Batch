@@ -129,7 +129,7 @@ public class SurveyService {
 
 
         // TODO 일주일 전꺼부터 되게끔 되어있다.
-        // getSurveyListAfter (move to mappingService)
+        // getRecentSurveyListFor (move to mappingService)
         List<MemberSurveyMapping> tempList = memberSurveyMappingRepository
                 .findByCreatedAtAfter(LocalDateTime.of(LocalDate.now().minusDays(7L), LocalTime.of(23, 59)));
 
@@ -165,7 +165,7 @@ public class SurveyService {
                 .build();
     }
 
-    public List<MemberSurveyMapping> getSurveyListAfter(Long days){
+    public List<MemberSurveyMapping> getRecentSurveyListFor(Long days){
         return memberSurveyMappingRepository.findByCreatedAtAfter(LocalDateTime
                 .of(LocalDate.now().minusDays(days), LocalTime.of(23, 59)));
     }
