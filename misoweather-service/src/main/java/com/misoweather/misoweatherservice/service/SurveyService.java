@@ -170,5 +170,14 @@ public class SurveyService {
                 .of(LocalDate.now().minusDays(days), LocalTime.of(23, 59)));
     }
 
+    public List<MemberSurveyMapping> getSurveyMatchesBigScaleList(List<MemberSurveyMapping> recentSurveyList, String shortBigScale){
+        List<MemberSurveyMapping> resultSurveyList = recentSurveyList;
+        if (shortBigScale != null) {
+            resultSurveyList = recentSurveyList.stream()
+                    .filter(item -> item.getShortBigScale().equals(shortBigScale)).collect(Collectors.toList());
+        }
+        return resultSurveyList;
+    }
+
 
 }
