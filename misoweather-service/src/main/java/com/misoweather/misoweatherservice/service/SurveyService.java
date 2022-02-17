@@ -48,20 +48,6 @@ public class SurveyService {
                 .collect(Collectors.toList());
     }
 
-    public List<AnswerStatusDto> buildFromFilteredMemberSurveyMappingList(Member member, List<Long> surveyIdList) {
-        return memberSurveyMappingRepository.findByMember(member)
-                .stream()
-                .filter(item ->
-                        item.getCreatedAt().isAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59))))
-                .map(item -> {
-                    // TODO db 배열 순서가 달라질 경우 리스트 인덱스가 달라지므로 문제가 생길 수 있다.
-                    surveyIdList.remove(item.getSurvey().getId());
-                    // TODO answer가 두 번이라니.. 필드 이름 바꾸자.
-                    return new AnswerStatusDto(item.getSurvey().getId(), item.getAnswer().getAnswer());
-                })
-                .collect(Collectors.toList());
-    }
-
     public List<AnswerStatusDto> buildAnswerStatusNullDtoList(List<Long> surveyIdList) {
         return surveyIdList.stream()
                 // TODO 생성자 하나 더 만들어서 다를 경우 수행하는 게 달라지게 한다.
@@ -74,16 +60,6 @@ public class SurveyService {
 
     public ListDto<AnswerStatusDto> buildAnswerStatusResponseDtoList(List<AnswerStatusDto> answerStatusDtoList){
         return ListDto.<AnswerStatusDto>builder().responseList(answerStatusDtoList).build();
-    }
-
-    public Boolean ifAnswerExist(Member member) {
-        List<MemberSurveyMapping> candidateList = memberSurveyMappingRepository
-                .findByCreatedAtAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59)))
-                .stream()
-                .filter(item -> item.getMember().getMemberId().equals(member.getMemberId()))
-                .collect(Collectors.toList());
-
-        return !candidateList.isEmpty();
     }
 
     public Answer getAnswer(AnswerSurveyDto answerSurveyDto) {
@@ -114,20 +90,11 @@ public class SurveyService {
                 .build();
     }
 
-    public void saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping) {
-        memberSurveyMappingRepository.save(memberSurveyMapping);
-    }
-
     public AnswerSurveyResponseDto buildAnswerSurveyResponseDto(Answer answer, Survey survey) {
         return AnswerSurveyResponseDto.builder()
                 .surveyDescription(survey.getDescription())
                 .answer(answer.getAnswer())
                 .build();
-    }
-
-    public List<MemberSurveyMapping> getRecentSurveyListFor(Long days){
-        return memberSurveyMappingRepository.findByCreatedAtAfter(LocalDateTime
-                .of(LocalDate.now().minusDays(days), LocalTime.of(23, 59)));
     }
 
     public List<MemberSurveyMapping> getSurveyMatchesBigScaleList(List<MemberSurveyMapping> recentSurveyList, String shortBigScale){

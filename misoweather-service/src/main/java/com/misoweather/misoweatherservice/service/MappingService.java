@@ -10,12 +10,15 @@ import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSur
 import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
+import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
 import com.misoweather.misoweatherservice.exception.ApiCustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,5 +76,38 @@ public class MappingService {
                 .filter(item -> item.getCreatedAt().getMonth() == LocalDate.now().getMonth())
                 .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
                 .collect(Collectors.toList());
+    }
+
+    public List<AnswerStatusDto> buildFromFilteredMemberSurveyMappingList(Member member, List<Long> surveyIdList) {
+        return memberSurveyMappingRepository.findByMember(member)
+                .stream()
+                .filter(item ->
+                        item.getCreatedAt().isAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59))))
+                .map(item -> {
+                    // TODO db 배열 순서가 달라질 경우 리스트 인덱스가 달라지므로 문제가 생길 수 있다.
+                    surveyIdList.remove(item.getSurvey().getId());
+                    // TODO answer가 두 번이라니.. 필드 이름 바꾸자.
+                    return new AnswerStatusDto(item.getSurvey().getId(), item.getAnswer().getAnswer());
+                })
+                .collect(Collectors.toList());
+    }
+
+    public Boolean ifAnswerExist(Member member) {
+        List<MemberSurveyMapping> candidateList = memberSurveyMappingRepository
+                .findByCreatedAtAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59)))
+                .stream()
+                .filter(item -> item.getMember().getMemberId().equals(member.getMemberId()))
+                .collect(Collectors.toList());
+
+        return !candidateList.isEmpty();
+    }
+
+    public void saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping) {
+        memberSurveyMappingRepository.save(memberSurveyMapping);
+    }
+
+    public List<MemberSurveyMapping> getRecentSurveyListFor(Long days){
+        return memberSurveyMappingRepository.findByCreatedAtAfter(LocalDateTime
+                .of(LocalDate.now().minusDays(days), LocalTime.of(23, 59)));
     }
 }

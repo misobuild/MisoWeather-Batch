@@ -16,6 +16,7 @@ import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterRe
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
 import com.misoweather.misoweatherservice.dto.response.survey.AnswerSurveyResponseDto;
+import com.misoweather.misoweatherservice.utils.reader.SurveyReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ComplexFlowService {
+    private static final Long recentDays = 7L;
 
     private final MemberService memberService;
     private final MappingService mappingService;
@@ -87,13 +89,14 @@ public class ComplexFlowService {
         List<MemberSurveyMapping> memberSurveyMappingList = mappingService.filterMemberSurveyMappingList(member, survey);
         surveyService.checkMemberSurveyMappingList(memberSurveyMappingList);
         MemberSurveyMapping memberSurveyMapping = surveyService.buildMemberSurveyMapping(member, answer, survey, answerSurveyDto);
-        surveyService.saveMemberSurveyMapping(memberSurveyMapping);
+        mappingService.saveMemberSurveyMapping(memberSurveyMapping);
         return surveyService.buildAnswerSurveyResponseDto(answer, survey);
     }
 
+    //TODO move Service by repository matches
     public ListDto<AnswerStatusDto> getAnswerStatus(Member member){
         List<Long> surveyIdList = surveyService.getAllSurveyId();
-        List<AnswerStatusDto> answerStatusDtoList = surveyService.buildFromFilteredMemberSurveyMappingList(member, surveyIdList);
+        List<AnswerStatusDto> answerStatusDtoList = mappingService.buildFromFilteredMemberSurveyMappingList(member, surveyIdList);
         List<AnswerStatusDto> nullStatusDtoList = surveyService.buildAnswerStatusNullDtoList(surveyIdList);
 
         answerStatusDtoList.addAll(nullStatusDtoList);
@@ -102,5 +105,12 @@ public class ComplexFlowService {
         return surveyService.buildAnswerStatusResponseDtoList(answerStatusDtoList);
     }
 
+    //TODO move Service by repository matches
+    public ListDto<SurveyReader> getSurveyResultList(String shortBigScale){
+        List<MemberSurveyMapping> recentSurveyList = mappingService.getRecentSurveyListFor(recentDays);
+        List<MemberSurveyMapping> recentIdMatchSurveyList = surveyService.getSurveyMatchesBigScaleList(recentSurveyList, shortBigScale);
+        List<SurveyReader> surveyReaderList = surveyService.getSurveyReaderMatchesIdList(recentIdMatchSurveyList);
 
+        return surveyService.setSurveyReaderList(surveyReaderList);
+    }
 }
