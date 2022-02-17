@@ -196,4 +196,13 @@ public class SurveyService {
 
         return surveyReaderList;
     }
+
+    public ListDto<SurveyReader> setSurveyReaderList(List<SurveyReader> surveyReaderList){
+        surveyReaderList.forEach(SurveyReader::setInfoMap);
+        surveyReaderList.forEach(SurveyReader::setValues);
+
+        return ListDto.<SurveyReader>builder()
+                .responseList(surveyReaderList)
+                .build();
+    }
 }
