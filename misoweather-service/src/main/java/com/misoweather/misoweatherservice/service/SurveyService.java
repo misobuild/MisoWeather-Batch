@@ -42,43 +42,6 @@ public class SurveyService {
         return ListDto.<AnswerSurveyJoinDto>builder().responseList(answerSurveyJoinList).build();
     }
 
-    public ListDto<AnswerStatusDto> getAnswerStatus(Member member) {
-        // FindAll SurveyIdList
-        List<Long> surveyIdList = surveyRepository.findAll().stream()
-                .map(item -> item.getId())
-                .collect(Collectors.toList());
-        log.info("surveyList are: {}", surveyIdList);
-
-        // filterMemberSurveyMapping
-        // TODO jpa isAfter 지원하니 filter 필요없다. 속도는 누가 더 빠를까?
-        List<AnswerStatusDto> answerStatusDtoList = memberSurveyMappingRepository.findByMember(member)
-                .stream()
-                .filter(item ->
-                        item.getCreatedAt().isAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59))))
-                .map(item -> {
-                    // TODO db 배열 순서가 달라질 경우 리스트 인덱스가 달라지므로 문제가 생길 수 있다.
-                    surveyIdList.remove(item.getSurvey().getId());
-                    // TODO answer가 두 번이라니.. 필드 이름 바꾸자.
-                    return new AnswerStatusDto(item.getSurvey().getId(), item.getAnswer().getAnswer());
-                })
-                .collect(Collectors.toList());
-
-
-        // 비어있는 애들의 리스트를 가져왔으니 그걸 null 채워서 돌려줘야 한다.
-        List<AnswerStatusDto> nullStatusDtoList = surveyIdList.stream()
-                // TODO 생성자 하나 더 만들어서 다를 경우 수행하는 게 달라지게 한다.
-                .map(item -> AnswerStatusDto.builder()
-                        .surveyId(item)
-                        .memberAnswer(null)
-                        .answered(Boolean.FALSE).build())
-                .collect(Collectors.toList());
-        answerStatusDtoList.addAll(nullStatusDtoList);
-
-        answerStatusDtoList.sort(Comparator.comparing(AnswerStatusDto::getSurveyId));
-
-        return ListDto.<AnswerStatusDto>builder().responseList(answerStatusDtoList).build();
-    }
-
     public List<Long> getAllSurveyId() {
         return surveyRepository.findAll().stream()
                 .map(item -> item.getId())
