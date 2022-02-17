@@ -171,20 +171,20 @@ public class SurveyService {
     }
 
     public List<MemberSurveyMapping> getSurveyMatchesBigScaleList(List<MemberSurveyMapping> recentSurveyList, String shortBigScale){
-        List<MemberSurveyMapping> resultSurveyList = recentSurveyList;
+        List<MemberSurveyMapping> recentIdMatchSurveyList = recentSurveyList;
         if (shortBigScale != null) {
-            resultSurveyList = recentSurveyList.stream()
+            recentIdMatchSurveyList = recentSurveyList.stream()
                     .filter(item -> item.getShortBigScale().equals(shortBigScale)).collect(Collectors.toList());
         }
-        return resultSurveyList;
+        return recentIdMatchSurveyList;
     }
 
-    public List<SurveyReader> getSurveyReaderMatchesIdList(List<MemberSurveyMapping> surveyMatchesBigScaleList){
+    public List<SurveyReader> getSurveyReaderMatchesIdList(List<MemberSurveyMapping> recentIdMatchSurveyList){
         List<SurveyReader> surveyReaderList = new ArrayList<>();
         List<Survey> totalSurveyList = surveyRepository.findAll();
 
         for (Survey survey : totalSurveyList) {
-            List<MemberSurveyMapping> conditionedSurveyList = surveyMatchesBigScaleList.stream()
+            List<MemberSurveyMapping> conditionedSurveyList = recentIdMatchSurveyList.stream()
                     .filter(item -> item.getSurvey().getId().equals(survey.getId()))
                     .collect(Collectors.toList());
             surveyReaderList.add(SurveyReader.builder()
