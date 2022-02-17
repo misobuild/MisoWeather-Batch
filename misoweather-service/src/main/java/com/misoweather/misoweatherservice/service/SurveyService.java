@@ -76,40 +76,6 @@ public class SurveyService {
         return ListDto.<AnswerStatusDto>builder().responseList(answerStatusDtoList).build();
     }
 
-    public ListDto<SurveyReader> getSurveyResultList(String shortBigScale) {
-        List<SurveyReader> surveyReaderList = new ArrayList<>();
-
-        // TODO 일주일 전꺼부터 되게끔 되어있다.
-        List<MemberSurveyMapping> tempList = memberSurveyMappingRepository
-                .findByCreatedAtAfter(LocalDateTime.of(LocalDate.now().minusDays(7L), LocalTime.of(23, 59)));
-
-        List<MemberSurveyMapping> todaySurveyList = tempList;
-        if (shortBigScale != null) {
-            todaySurveyList = tempList.stream()
-                    .filter(item -> item.getShortBigScale().equals(shortBigScale)).collect(Collectors.toList());
-        }
-
-        List<Survey> surveyList = surveyRepository.findAll();
-
-        for (Survey survey : surveyList) {
-            List<MemberSurveyMapping> msmList = todaySurveyList.stream()
-                    .filter(msm -> msm.getSurvey().getId().equals(survey.getId()))
-                    .collect(Collectors.toList());
-            surveyReaderList.add(SurveyReader.builder()
-                    .surveyId(survey.getId())
-                    .surveyTitle(survey.getTitle())
-                    .surveyDescription(survey.getDescription())
-                    .msmList(msmList).build());
-        }
-
-        surveyReaderList.forEach(SurveyReader::setInfoMap);
-        surveyReaderList.forEach(SurveyReader::setValues);
-
-        return ListDto.<SurveyReader>builder()
-                .responseList(surveyReaderList)
-                .build();
-    }
-
     public Boolean ifAnswerExist(Member member) {
         List<MemberSurveyMapping> candidateList = memberSurveyMappingRepository
                 .findByCreatedAtAfter(LocalDateTime.of(LocalDate.now().minusDays(1L), LocalTime.of(23, 59)))
@@ -158,4 +124,51 @@ public class SurveyService {
                 .answer(answer.getAnswer())
                 .build();
     }
+
+    public ListDto<SurveyReader> getSurveyResultList(String shortBigScale) {
+
+
+        // TODO 일주일 전꺼부터 되게끔 되어있다.
+        // getSurveyListAfter (move to mappingService)
+        List<MemberSurveyMapping> tempList = memberSurveyMappingRepository
+                .findByCreatedAtAfter(LocalDateTime.of(LocalDate.now().minusDays(7L), LocalTime.of(23, 59)));
+
+        // getTodaySurveyList
+        List<MemberSurveyMapping> todaySurveyList = tempList;
+        if (shortBigScale != null) {
+            todaySurveyList = tempList.stream()
+                    .filter(item -> item.getShortBigScale().equals(shortBigScale)).collect(Collectors.toList());
+        }
+
+        // readTodaySurveyList
+        List<SurveyReader> surveyReaderList = new ArrayList<>();
+        List<Survey> surveyList = surveyRepository.findAll();
+
+        for (Survey survey : surveyList) {
+            List<MemberSurveyMapping> msmList = todaySurveyList.stream()
+                    .filter(msm -> msm.getSurvey().getId().equals(survey.getId()))
+                    .collect(Collectors.toList());
+            surveyReaderList.add(SurveyReader.builder()
+                    .surveyId(survey.getId())
+                    .surveyTitle(survey.getTitle())
+                    .surveyDescription(survey.getDescription())
+                    .msmList(msmList).build());
+        }
+
+        // setReaderListValue and return
+        surveyReaderList.forEach(SurveyReader::setInfoMap);
+        surveyReaderList.forEach(SurveyReader::setValues);
+
+
+        return ListDto.<SurveyReader>builder()
+                .responseList(surveyReaderList)
+                .build();
+    }
+
+    public List<MemberSurveyMapping> getSurveyListAfter(Long days){
+        return memberSurveyMappingRepository.findByCreatedAtAfter(LocalDateTime
+                .of(LocalDate.now().minusDays(days), LocalTime.of(23, 59)));
+    }
+
+
 }
