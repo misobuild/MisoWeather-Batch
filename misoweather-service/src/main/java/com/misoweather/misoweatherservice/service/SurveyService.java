@@ -19,11 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SurveyService {
-    // 조회와 행위(TrueFalse 판단이나 상태를 바꾸는 것)를 분리하자
+
     private final MemberSurveyMappingRepository memberSurveyMappingRepository;
     private final SurveyRepository surveyRepository;
     private final AnswerRepository answerRepository;

@@ -9,7 +9,6 @@ import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSur
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
 import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
-import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
 import com.misoweather.misoweatherservice.exception.ApiCustomException;
 import lombok.RequiredArgsConstructor;
