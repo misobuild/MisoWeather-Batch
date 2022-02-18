@@ -4,7 +4,9 @@ import com.misoweather.misoweatherservice.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.comment.CommentRepository;
 import com.misoweather.misoweatherservice.domain.member.Member;
+import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.utils.reader.ContentReader;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -69,6 +72,35 @@ public class CommentServiceTest {
         Assertions.assertEquals(savedComment.getDeleted(), Boolean.FALSE);
 
         verify(commentRepository, times(1)).save(givenComment);
+    }
+
+    @Test
+    @DisplayName("getAllCommentList() 테스트")
+    void getAllComment(){
+        Member givenMember = Member.builder()
+                .socialId("12345")
+                .emoji("a")
+                .nickname("행복한 가짜광대")
+                .socialType("kakao")
+                .build();
+
+        Comment givenComment = Comment.builder()
+                .content(contentReader.checker("안녕하세요"))
+                .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
+                .member(givenMember)
+                .nickname(givenMember.getNickname())
+                .deleted(Boolean.FALSE)
+                .emoji(givenMember.getEmoji())
+                .build();
+
+        given(commentRepository.findAll()).willReturn(List.of(givenComment));
+
+        CommentRegisterResponseDto resultDto = commentService.getAllCommentList();
+
+        Assertions.assertEquals(resultDto.getCommentList().get(0).getMember().getSocialId(), "12345");
+        Assertions.assertEquals(resultDto.getCommentList().get(0).getContent(), "안녕하세요");
+        Assertions.assertEquals(resultDto.getCommentList().get(0).getBigScale(), "서울");
+
     }
 
     @Test
