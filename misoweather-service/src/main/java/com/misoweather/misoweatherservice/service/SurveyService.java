@@ -3,7 +3,6 @@ package com.misoweather.misoweatherservice.service;
 import com.misoweather.misoweatherservice.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
-import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.AnswerRepository;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SurveyService {
 
-    private final MemberSurveyMappingRepository memberSurveyMappingRepository;
     private final SurveyRepository surveyRepository;
     private final AnswerRepository answerRepository;
 

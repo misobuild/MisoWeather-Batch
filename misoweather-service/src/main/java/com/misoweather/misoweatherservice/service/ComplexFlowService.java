@@ -93,7 +93,6 @@ public class ComplexFlowService {
         return surveyService.buildAnswerSurveyResponseDto(answer, survey);
     }
 
-    //TODO move Service by repository matches
     public ListDto<AnswerStatusDto> getAnswerStatus(Member member){
         List<Long> surveyIdList = surveyService.getAllSurveyId();
         List<AnswerStatusDto> answerStatusDtoList = mappingService.buildFromFilteredMemberSurveyMappingList(member, surveyIdList);
@@ -105,7 +104,6 @@ public class ComplexFlowService {
         return surveyService.buildAnswerStatusResponseDtoList(answerStatusDtoList);
     }
 
-    //TODO move Service by repository matches
     public ListDto<SurveyReader> getSurveyResultList(String shortBigScale){
         List<MemberSurveyMapping> recentSurveyList = mappingService.getRecentSurveyListFor(recentDays);
         List<MemberSurveyMapping> recentIdMatchSurveyList = surveyService.getSurveyMatchesBigScaleList(recentSurveyList, shortBigScale);
