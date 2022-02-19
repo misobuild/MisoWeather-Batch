@@ -4,7 +4,6 @@ import com.misoweather.misoweatherservice.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.comment.CommentRepository;
 import com.misoweather.misoweatherservice.domain.member.Member;
-import com.misoweather.misoweatherservice.dto.response.comment.CommentListResponseDto;
 import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.utils.reader.ContentReader;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ContentReader contentReader;
 
-    public void saveComment(String content, Member member, String bigScale){
+    public Comment saveComment(String content, Member member, String bigScale){
         Comment comment = Comment.builder()
                 .content(contentReader.checker(content))
                 .bigScale(BigScaleEnum.getEnum(bigScale).toString())
@@ -28,7 +27,7 @@ public class CommentService {
                 .deleted(Boolean.FALSE)
                 .emoji(member.getEmoji())
                 .build();
-        commentRepository.save(comment);
+        return commentRepository.save(comment);
     }
 
     public CommentRegisterResponseDto getAllCommentList(){
@@ -37,18 +36,14 @@ public class CommentService {
                 .build();
     }
 
-    public CommentListResponseDto getCommentList(Long commentId, Pageable page){
-        final List<Comment> rawCommentList = getComments(commentId, page);
-        final Long lastIdOfList = rawCommentList.isEmpty() ?
-                null : rawCommentList.get(rawCommentList.size() - 1).getId();
-
-        return new CommentListResponseDto(rawCommentList, hasNext(lastIdOfList));
-    }
-
     public List<Comment> getComments(Long commentId, Pageable page) {
         return commentId == null ?
                 this.commentRepository.findAllByOrderByIdDesc(page) :
                 this.commentRepository.findByIdLessThanOrderByIdDesc(commentId, page);
+    }
+
+    public Long getLastId(List<Comment> rawCommentList){
+        return  rawCommentList.isEmpty() ? null : rawCommentList.get(rawCommentList.size() - 1).getId();
     }
 
     public void deleteAll(Member member){
