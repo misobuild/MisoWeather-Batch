@@ -1,5 +1,6 @@
 package com.misoweather.misoweatherservice.service;
 
+import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
@@ -12,12 +13,14 @@ import com.misoweather.misoweatherservice.dto.request.member.LoginRequestDto;
 import com.misoweather.misoweatherservice.dto.request.member.SignUpRequestDto;
 import com.misoweather.misoweatherservice.dto.request.survey.AnswerSurveyDto;
 import com.misoweather.misoweatherservice.dto.response.ListDto;
+import com.misoweather.misoweatherservice.dto.response.comment.CommentListResponseDto;
 import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.dto.response.member.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
 import com.misoweather.misoweatherservice.dto.response.survey.AnswerSurveyResponseDto;
 import com.misoweather.misoweatherservice.utils.reader.SurveyReader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +74,12 @@ public class ComplexFlowService {
         String bigScale = mappingService.getBigScale(member);
         commentService.saveComment(commentRegisterRequestDto.getContent(), member, bigScale);
         return commentService.getAllCommentList();
+    }
+
+    public CommentListResponseDto getCommentList(Long commentId, Pageable page){
+        List<Comment> rawCommentList = commentService.getComments(commentId, page);
+        Long lasIdOfList = commentService.getLastId(rawCommentList);
+        return new CommentListResponseDto(rawCommentList, commentService.hasNext(lasIdOfList));
     }
 
     // RegionService
