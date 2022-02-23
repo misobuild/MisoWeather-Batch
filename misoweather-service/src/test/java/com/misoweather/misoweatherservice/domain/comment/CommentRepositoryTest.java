@@ -31,7 +31,7 @@ public class CommentRepositoryTest {
 
     @Test
     @DisplayName("CommentRepository: save()")
-    void saveComment(){
+    void save(){
         // given
         Member givenMember = Member.builder()
                 .socialId("12345")
