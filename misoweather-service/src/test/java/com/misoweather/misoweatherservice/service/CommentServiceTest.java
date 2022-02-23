@@ -6,33 +6,34 @@ import com.misoweather.misoweatherservice.domain.comment.CommentRepository;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.dto.response.comment.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.utils.reader.ContentReader;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
+//TODO assertThat 으로 교체
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentService 테스트")
 public class CommentServiceTest {
 
     @Mock private CommentRepository commentRepository;
-    private CommentService commentService;
+    @InjectMocks private CommentService commentService;
     private ContentReader contentReader;
 
     @BeforeEach
@@ -62,16 +63,9 @@ public class CommentServiceTest {
 
         given(commentRepository.save(any(Comment.class))).willReturn(givenComment);
 
-        Comment savedComment = commentRepository.save(givenComment);
+        Comment savedComment = commentService.saveComment("안녕하세요", givenMember, "서울특별시");
 
-        Assertions.assertEquals(savedComment.getContent(), "안녕하세요");
-        Assertions.assertEquals(savedComment.getBigScale(), "서울");
-        Assertions.assertEquals(savedComment.getMember().getSocialId(), "12345");
-        Assertions.assertEquals(savedComment.getEmoji(), "a");
-        Assertions.assertEquals(savedComment.getMember().getNickname(), "행복한 가짜광대");
-        Assertions.assertEquals(savedComment.getDeleted(), Boolean.FALSE);
-
-        verify(commentRepository, times(1)).save(givenComment);
+        assertThat(savedComment, is(givenComment));
     }
 
     @Test
@@ -97,10 +91,7 @@ public class CommentServiceTest {
 
         CommentRegisterResponseDto resultDto = commentService.getAllCommentList();
 
-        Assertions.assertEquals(resultDto.getCommentList().get(0).getMember().getSocialId(), "12345");
-        Assertions.assertEquals(resultDto.getCommentList().get(0).getContent(), "안녕하세요");
-        Assertions.assertEquals(resultDto.getCommentList().get(0).getBigScale(), "서울");
-
+        assertThat(resultDto.getCommentList().get(0), is(givenComment));
     }
 
     @Test
@@ -128,10 +119,8 @@ public class CommentServiceTest {
         List<Comment> commentListExist = commentService.getComments(1L, PageRequest.of(0,1));
         List<Comment> commentListNull = commentService.getComments(null, PageRequest.of(0,1));
 
-        Assertions.assertEquals(commentListExist.get(0).getMember().getSocialId(), "67890");
-        Assertions.assertEquals(commentListExist.get(0).getContent(), "안녕하세요");
-        Assertions.assertEquals(commentListExist.get(0).getBigScale(), "서울");
-        Assertions.assertEquals(commentListNull, List.of());
+        assertThat(commentListNull, is(nullValue()));
+        assertThat(commentListExist.get(0), is(givenComment));
 
         verify(commentRepository, times(1)).findAllByOrderByIdDesc(any(Pageable.class));
         verify(commentRepository, times(1)).findByIdLessThanOrderByIdDesc(anyLong(), any(Pageable.class));
@@ -153,5 +142,10 @@ public class CommentServiceTest {
         Assertions.assertEquals(firstResult, Boolean.FALSE);
         Assertions.assertEquals(secondResult, Boolean.TRUE);
         Assertions.assertEquals(thirdResult, Boolean.FALSE);
+
+        assertThat(firstResult, is(Boolean.FALSE));
+        assertThat(secondResult, is(Boolean.TRUE));
+        assertThat(thirdResult, is(Boolean.FALSE));
+
     }
 }
