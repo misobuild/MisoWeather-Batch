@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.iterableWithSize;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -90,6 +91,37 @@ public class CommentRepositoryTest {
 
         // then
         assertThat(foundCommentList.get(0), is(savedComment));
+    }
+
+
+    @Test
+    @DisplayName("CommentRepository: givenMember의 코멘트 모두 지운다")
+    void deleteAll(){
+        // given
+        Member givenMember = Member.builder()
+                .socialId("12345")
+                .emoji("a")
+                .nickname("행복한 가짜광대")
+                .socialType("kakao")
+                .build();
+
+        memberRepository.save(givenMember);
+
+        Comment givenComment = Comment.builder()
+                .content(contentReader.checker("안녕하세요"))
+                .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
+                .member(givenMember)
+                .nickname(givenMember.getNickname())
+                .deleted(Boolean.FALSE)
+                .emoji(givenMember.getEmoji())
+                .build();
+
+        // when
+        commentRepository.save(givenComment);
+        commentService.deleteAll(givenMember);
+
+        // then
+        assertThat(commentRepository.findByMember(givenMember), iterableWithSize(0));
     }
 
 
