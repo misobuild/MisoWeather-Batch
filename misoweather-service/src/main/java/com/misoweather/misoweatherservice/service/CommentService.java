@@ -48,7 +48,7 @@ public class CommentService {
 
     public void deleteAll(Member member){
         List<Comment> commentList = commentRepository.findByMember(member);
-        commentRepository.deleteAll(commentList);
+        commentRepository.deleteAllInBatch(commentList);
     }
 
     public Boolean hasNext(Long id) {
