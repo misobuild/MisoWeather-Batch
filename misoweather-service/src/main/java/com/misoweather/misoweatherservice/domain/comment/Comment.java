@@ -3,6 +3,7 @@ package com.misoweather.misoweatherservice.domain.comment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.misoweather.misoweatherservice.domain.Timestamped;
 import com.misoweather.misoweatherservice.domain.member.Member;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "COMMENT_TB")
 public class Comment extends Timestamped {
@@ -43,6 +44,17 @@ public class Comment extends Timestamped {
 
     @Builder
     public Comment(String content, String bigScale, String nickname, Member member, Boolean deleted, String emoji) {
+        this.content = content;
+        this.bigScale = bigScale;
+        this.nickname = nickname;
+        this.member = member;
+        this.deleted = deleted;
+        this.emoji = emoji;
+    }
+
+    @Builder
+    Comment(Long id, String content, String bigScale, String nickname, Member member, Boolean deleted, String emoji) {
+        this.id = id;
         this.content = content;
         this.bigScale = bigScale;
         this.nickname = nickname;
