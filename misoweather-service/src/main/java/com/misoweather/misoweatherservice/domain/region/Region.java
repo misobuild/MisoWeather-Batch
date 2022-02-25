@@ -1,6 +1,7 @@
 package com.misoweather.misoweatherservice.domain.region;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -11,7 +12,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "REGION_TB")
 public class Region {
