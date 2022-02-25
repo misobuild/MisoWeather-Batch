@@ -28,8 +28,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-
-//TODO spy를 사용하여 auditing으로 mock객체 생성으로만 해결할 수 없는 부분을 해결했다.는 내용을 기록하자
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentService 테스트")
 public class MappingServiceTest {

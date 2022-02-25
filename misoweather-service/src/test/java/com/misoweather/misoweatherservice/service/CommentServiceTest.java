@@ -152,24 +152,11 @@ public class CommentServiceTest {
     @Test
     @DisplayName("getLastId()")
     void getLastId(){
-        // given
-        Member givenMember = Member.builder()
-                .socialId("67890")
-                .emoji("b")
-                .nickname("우울한 진짜광대")
-                .socialType("apple")
-                .build();
-
-        Comment givenComment = spy(Comment.builder()
-                .content("안녕하세요")
-                .bigScale("서울")
-                .build());
-
+        Comment givenComment = spy(Comment.class);
+        doReturn(11L).when(givenComment).getId();
         List<Comment> caseOneList = List.of();
         List<Comment> caseTwoList = List.of(givenComment);
-        doReturn(11L).when(givenComment).getId();
 
-        // when
         assertThat(commentService.getLastId(caseOneList), is(nullValue()));
         assertThat(commentService.getLastId(caseTwoList), is(11L));
     }
