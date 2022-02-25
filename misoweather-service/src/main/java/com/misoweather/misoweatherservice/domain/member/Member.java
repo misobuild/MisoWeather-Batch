@@ -1,6 +1,7 @@
 package com.misoweather.misoweatherservice.domain.member;
 
 import com.misoweather.misoweatherservice.domain.Timestamped;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "MEMBER_TB")
 public class Member extends Timestamped {
