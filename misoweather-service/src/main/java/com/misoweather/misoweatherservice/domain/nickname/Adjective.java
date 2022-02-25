@@ -1,5 +1,6 @@
 package com.misoweather.misoweatherservice.domain.nickname;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -9,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "ADJECTIVE_TB")
 public class Adjective {
