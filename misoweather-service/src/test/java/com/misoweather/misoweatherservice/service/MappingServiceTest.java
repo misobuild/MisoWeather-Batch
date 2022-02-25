@@ -49,7 +49,6 @@ public class MappingServiceTest {
     @Test
     @DisplayName("member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
     void filterMemberSurveyMappingList(){
-        // given
         Member givenMember = spy(Member.class);
         Survey givenSurvey = spy(Survey.class);
 
@@ -60,26 +59,21 @@ public class MappingServiceTest {
                 .shortBigScale(BigScaleEnum.getEnum("서울특별시").getShortValue())
                 .build());
 
-        LocalDateTime localDateTimeNow = LocalDateTime.now();
-        LocalDateTime localDateTimeWrongYear = localDateTimeNow.minusYears(20);
-        LocalDateTime localDateTimeWrongMonth = localDateTimeNow.minusMonths(1);
-        LocalDateTime localDateTimeWrongDays = localDateTimeNow.minusDays(1);
-
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
-        doReturn(localDateTimeNow).when(givenMemberSurveyMapping).getCreatedAt();
+        doReturn(LocalDateTime.now()).when(givenMemberSurveyMapping).getCreatedAt();
 
         List<MemberSurveyMapping> memberRegionMappingList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingList.get(0), is(givenMemberSurveyMapping));
 
-        doReturn(localDateTimeWrongYear).when(givenMemberSurveyMapping).getCreatedAt();
+        doReturn(LocalDateTime.now().minusYears(20)).when(givenMemberSurveyMapping).getCreatedAt();
         List<MemberSurveyMapping> memberRegionMappingWrongYearList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongYearList, is(List.of()));
 
-        doReturn(localDateTimeWrongMonth).when(givenMemberSurveyMapping).getCreatedAt();
+        doReturn(LocalDateTime.now().minusMonths(1)).when(givenMemberSurveyMapping).getCreatedAt();
         List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongMonthList, is(List.of()));
 
-        doReturn(localDateTimeWrongDays).when(givenMemberSurveyMapping).getCreatedAt();
+        doReturn(LocalDateTime.now().minusDays(1)).when(givenMemberSurveyMapping).getCreatedAt();
         List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongDaysList, is(List.of()));
     }
