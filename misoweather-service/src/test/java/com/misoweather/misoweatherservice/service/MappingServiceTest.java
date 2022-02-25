@@ -101,22 +101,20 @@ public class MappingServiceTest {
     @DisplayName("MappingService: buildFromFilteredMemberSurveyMappingList 테스트")
     void buildFromFilteredMemberSurveyMappingList(){
         Member givenMember = spy(Member.class);
-
         Answer givenAnswer = spy(Answer.class);
-        doReturn("안녕하세요").when(givenAnswer).getAnswer();
-
         Survey givenSurvey = spy(Survey.class);
-        doReturn(8888L).when(givenSurvey).getId();
-
+        List<Long> surveyIdList = new ArrayList<>(Arrays.asList(8888L, 9999L));
         MemberSurveyMapping givenMemberSurveyMapping = spy(MemberSurveyMapping.builder()
                 .survey(givenSurvey)
                 .member(givenMember)
                 .answer(givenAnswer)
                 .shortBigScale(BigScaleEnum.getEnum("서울특별시").getShortValue())
                 .build());
+
+        doReturn("안녕하세요").when(givenAnswer).getAnswer();
+        doReturn(8888L).when(givenSurvey).getId();
         doReturn(LocalDateTime.now()).when(givenMemberSurveyMapping).getCreatedAt();
 
-        List<Long> surveyIdList = new ArrayList<>(Arrays.asList(8888L));
         given(memberSurveyMappingRepository.findByMember(givenMember)).willReturn(List.of(givenMemberSurveyMapping));
 
         List<AnswerStatusDto> answerStatusDtoList = mappingService.buildFromFilteredMemberSurveyMappingList(givenMember, surveyIdList);
@@ -124,6 +122,6 @@ public class MappingServiceTest {
         assertThat(answerStatusDtoList.get(0).getSurveyId(), is(8888L));
         assertThat(answerStatusDtoList.get(0).getMemberAnswer(), is("안녕하세요"));
         assertThat(answerStatusDtoList.get(0).getAnswered(), is(Boolean.TRUE));
-        assertThat(surveyIdList, is(List.of()));
+        assertThat(surveyIdList, is(List.of(9999L)));
     }
 }
