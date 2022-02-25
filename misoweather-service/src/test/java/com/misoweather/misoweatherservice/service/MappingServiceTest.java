@@ -1,13 +1,18 @@
 package com.misoweather.misoweatherservice.service;
 
 import com.misoweather.misoweatherservice.constants.BigScaleEnum;
+import com.misoweather.misoweatherservice.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
+import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
+import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
+import com.misoweather.misoweatherservice.exception.ApiCustomException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +34,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CommentService 테스트")
+@DisplayName("MappingService 테스트")
 public class MappingServiceTest {
 
     @Mock
@@ -78,7 +83,7 @@ public class MappingServiceTest {
 
     @Test
     @DisplayName("MappingService: ifAnswerExist()")
-    void ifAnswerExist(){
+    void ifAnswerExistWhen(){
         Member givenMember = spy(Member.class);
         doReturn(9999L).when(givenMember).getMemberId();
 
@@ -91,9 +96,17 @@ public class MappingServiceTest {
 
         given(memberSurveyMappingRepository.findByCreatedAtAfter(any(LocalDateTime.class))).willReturn(List.of(givenMemberSurveyMapping));
         assertThat(mappingService.ifAnswerExist(givenMember), is(Boolean.TRUE));
+    }
 
+    @Test
+    @DisplayName("MappingService: ifAnswerExist() when List Not Found")
+    void ifAnswerExistWhenNotFound(){
+        Member givenMember = spy(Member.class);
         given(memberSurveyMappingRepository.findByCreatedAtAfter(any(LocalDateTime.class))).willReturn(List.of());
-        assertThat(mappingService.ifAnswerExist(givenMember), is(Boolean.FALSE));
+
+        Boolean result = mappingService.ifAnswerExist(givenMember);
+
+        assertThat(result, is(Boolean.FALSE));
     }
 
 
@@ -111,7 +124,7 @@ public class MappingServiceTest {
                 .shortBigScale(BigScaleEnum.getEnum("서울특별시").getShortValue())
                 .build());
 
-        doReturn("안녕하세요").when(givenAnswer).getAnswer();
+        doReturn("안녕하세요").when(givenAnswer).getContent();
         doReturn(8888L).when(givenSurvey).getId();
         doReturn(LocalDateTime.now()).when(givenMemberSurveyMapping).getCreatedAt();
 
