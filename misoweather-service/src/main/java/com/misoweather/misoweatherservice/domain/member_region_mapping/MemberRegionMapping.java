@@ -3,6 +3,7 @@ package com.misoweather.misoweatherservice.domain.member_region_mapping;
 import com.misoweather.misoweatherservice.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.region.Region;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "MEMBER_REGION_MAPPING_TB")
 public class MemberRegionMapping {
