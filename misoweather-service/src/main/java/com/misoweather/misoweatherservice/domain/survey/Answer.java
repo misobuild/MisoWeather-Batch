@@ -2,7 +2,6 @@ package com.misoweather.misoweatherservice.domain.survey;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -30,11 +29,4 @@ public class Answer {
     @ManyToOne
     @JoinColumn(nullable = false, name = "SURVEY_ID")
     private Survey survey;
-
-    Answer(Long id, String description, String answer, Survey survey) {
-        this.id = id;
-        this.description = description;
-        this.answer = answer;
-        this.survey = survey;
-    }
 }

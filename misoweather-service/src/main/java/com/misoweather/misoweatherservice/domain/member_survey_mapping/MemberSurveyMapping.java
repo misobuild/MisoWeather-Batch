@@ -27,12 +27,10 @@ public class MemberSurveyMapping extends Timestamped {
     @JoinColumn(nullable = false, name = "MEMBER_ID")
     private Member member;
 
-    // TODO fetch join 사용하여 n+1 문제 해결해야
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "ANSWER_ID")
     private Answer answer;
 
-    // TODO fetch join 사용하여 n+1 문제 해결해야
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "SURVEY_ID")
     private Survey survey;
