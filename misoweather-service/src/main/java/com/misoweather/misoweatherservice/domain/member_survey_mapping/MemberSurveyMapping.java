@@ -4,6 +4,7 @@ import com.misoweather.misoweatherservice.domain.Timestamped;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "MEMBER_SURVEY_MAPPING_TB")
 public class MemberSurveyMapping extends Timestamped {
