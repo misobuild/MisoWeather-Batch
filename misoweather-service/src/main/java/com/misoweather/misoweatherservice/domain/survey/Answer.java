@@ -1,6 +1,8 @@
 package com.misoweather.misoweatherservice.domain.survey;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -9,7 +11,7 @@ import javax.persistence.*;
 
 // TODO 인덱싱 by surveyId
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity(name = "ANSWER_TB")
 public class Answer {
@@ -28,4 +30,11 @@ public class Answer {
     @ManyToOne
     @JoinColumn(nullable = false, name = "SURVEY_ID")
     private Survey survey;
+
+    Answer(Long id, String description, String answer, Survey survey) {
+        this.id = id;
+        this.description = description;
+        this.answer = answer;
+        this.survey = survey;
+    }
 }
