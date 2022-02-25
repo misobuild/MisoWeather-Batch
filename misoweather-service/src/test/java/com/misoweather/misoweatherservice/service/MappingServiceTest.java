@@ -5,7 +5,9 @@ import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
+import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
+import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -98,5 +102,36 @@ public class MappingServiceTest {
 
         given(memberSurveyMappingRepository.findByCreatedAtAfter(any(LocalDateTime.class))).willReturn(List.of());
         assertThat(mappingService.ifAnswerExist(givenMember), is(Boolean.FALSE));
+    }
+
+
+    @Test
+    @DisplayName("MappingService: buildFromFilteredMemberSurveyMappingList 테스트")
+    void buildFromFilteredMemberSurveyMappingList(){
+        Member givenMember = spy(Member.class);
+
+        Answer givenAnswer = spy(Answer.class);
+        doReturn("안녕하세요").when(givenAnswer).getAnswer();
+
+        Survey givenSurvey = spy(Survey.class);
+        doReturn(8888L).when(givenSurvey).getId();
+
+        MemberSurveyMapping givenMemberSurveyMapping = spy(MemberSurveyMapping.builder()
+                .survey(givenSurvey)
+                .member(givenMember)
+                .answer(givenAnswer)
+                .shortBigScale(BigScaleEnum.getEnum("서울특별시").getShortValue())
+                .build());
+        doReturn(LocalDateTime.now()).when(givenMemberSurveyMapping).getCreatedAt();
+
+        List<Long> surveyIdList = new ArrayList<>(Arrays.asList(8888L));
+        given(memberSurveyMappingRepository.findByMember(givenMember)).willReturn(List.of(givenMemberSurveyMapping));
+
+        List<AnswerStatusDto> answerStatusDtoList = mappingService.buildFromFilteredMemberSurveyMappingList(givenMember, surveyIdList);
+
+        assertThat(answerStatusDtoList.get(0).getSurveyId(), is(8888L));
+        assertThat(answerStatusDtoList.get(0).getMemberAnswer(), is("안녕하세요"));
+        assertThat(answerStatusDtoList.get(0).getAnswered(), is(Boolean.TRUE));
+        assertThat(surveyIdList, is(List.of()));
     }
 }
