@@ -1,16 +1,11 @@
 package com.misoweather.misoweatherservice.service;
 
 import com.misoweather.misoweatherservice.constants.BigScaleEnum;
-import com.misoweather.misoweatherservice.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
-import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
-import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
-import com.misoweather.misoweatherservice.exception.ApiCustomException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,9 +19,11 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+
 
 //TODO spy를 사용하여 auditing으로 mock객체 생성으로만 해결할 수 없는 부분을 해결했다.는 내용을 기록하자
 @ExtendWith(MockitoExtension.class)
@@ -49,18 +46,8 @@ public class MappingServiceTest {
     @DisplayName("member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
     void filterMemberSurveyMappingList(){
         // given
-        Member givenMember = Member.builder()
-                .socialId("12345")
-                .emoji("a")
-                .nickname("행복한 가짜광대")
-                .socialType("kakao")
-                .build();
-
-        Survey givenSurvey = Survey.builder()
-                .category("카테고리 A")
-                .description("설명 A")
-                .title("제목 A")
-                .build();
+        Member givenMember = spy(Member.class);
+        Survey givenSurvey = spy(Survey.class);
 
         MemberSurveyMapping givenMemberSurveyMapping = spy(MemberSurveyMapping.builder()
                 .survey(givenSurvey)
@@ -94,48 +81,22 @@ public class MappingServiceTest {
     }
 
     @Test
-    @DisplayName("filterMemberRegionMappingList(): 현재 날짜와 같은 mapping만 남도록 filter 한다.")
-    void filterMemberRegionMappingList() {
-        // given
-        Member givenMember = Member.builder()
-                .socialId("12345")
-                .emoji("a")
-                .nickname("행복한 가짜광대")
-                .socialType("kakao")
-                .build();
+    @DisplayName("MappingService: ifAnswerExist()")
+    void ifAnswerExist(){
+        Member givenMember = spy(Member.class);
+        doReturn(9999L).when(givenMember).getMemberId();
 
-        Region givenRegion = Region.builder()
-                .bigScale("서울특별시")
-                .midScale("중구")
-                .smallScale("신당동")
-                .id(28L)
-                .lastWeatherUpdate(null)
-                .longitude(127)
-                .latitude(37)
-                .LOCATION_X(60)
-                .LOCATION_Y(127)
-                .build();
-
-        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-                .region(givenRegion)
+        MemberSurveyMapping givenMemberSurveyMapping = spy(MemberSurveyMapping.builder()
+                .survey(null)
                 .member(givenMember)
-                .regionStatus(RegionEnum.DEFAULT)
-                .build();
+                .answer(null)
+                .shortBigScale(BigScaleEnum.getEnum("서울특별시").getShortValue())
+                .build());
 
+        given(memberSurveyMappingRepository.findByCreatedAtAfter(any(LocalDateTime.class))).willReturn(List.of(givenMemberSurveyMapping));
+        assertThat(mappingService.ifAnswerExist(givenMember), is(Boolean.TRUE));
 
-        List<MemberRegionMapping> memberRegionMappingList = List.of(memberRegionMapping);
-        List<MemberRegionMapping> memberRegionMappingEmptyList = List.of();
-
-        // when
-        MemberRegionMapping filteredMemberRegionMapping = mappingService.filterMemberRegionMappingList(memberRegionMappingList);
-        ApiCustomException exceptionThrown = Assertions.assertThrows(
-                ApiCustomException.class,
-                () -> {
-                    mappingService.filterMemberRegionMappingList(memberRegionMappingEmptyList);
-                }
-        );
-
-        assertThat(filteredMemberRegionMapping, is(memberRegionMappingList.get(0)));
-        assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
+        given(memberSurveyMappingRepository.findByCreatedAtAfter(any(LocalDateTime.class))).willReturn(List.of());
+        assertThat(mappingService.ifAnswerExist(givenMember), is(Boolean.FALSE));
     }
 }
