@@ -1,11 +1,14 @@
 package com.misoweather.misoweatherservice.service;
 
+import com.misoweather.misoweatherservice.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
+import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
 import com.misoweather.misoweatherservice.domain.region.Region;
+import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.exception.ApiCustomException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +18,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
+//TODO spy를 사용하여 auditing으로 mock객체 생성으로만 해결할 수 없는 부분을 해결했다.는 내용을 기록하자
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentService 테스트")
 public class MappingServiceTest {
@@ -36,6 +43,54 @@ public class MappingServiceTest {
     @BeforeEach
     void setUp(){
         this.mappingService = new MappingService(memberRegionMappingRepository, memberSurveyMappingRepository);
+    }
+
+    @Test
+    @DisplayName("member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
+    void filterMemberSurveyMappingList(){
+        // given
+        Member givenMember = Member.builder()
+                .socialId("12345")
+                .emoji("a")
+                .nickname("행복한 가짜광대")
+                .socialType("kakao")
+                .build();
+
+        Survey givenSurvey = Survey.builder()
+                .category("카테고리 A")
+                .description("설명 A")
+                .title("제목 A")
+                .build();
+
+        MemberSurveyMapping givenMemberSurveyMapping = spy(MemberSurveyMapping.builder()
+                .survey(givenSurvey)
+                .member(givenMember)
+                .answer(null)
+                .shortBigScale(BigScaleEnum.getEnum("서울특별시").getShortValue())
+                .build());
+
+        LocalDateTime localDateTimeNow = LocalDateTime.now();
+        LocalDateTime localDateTimeWrongYear = localDateTimeNow.minusYears(20);
+        LocalDateTime localDateTimeWrongMonth = localDateTimeNow.minusMonths(1);
+        LocalDateTime localDateTimeWrongDays = localDateTimeNow.minusDays(1);
+
+        given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
+        doReturn(localDateTimeNow).when(givenMemberSurveyMapping).getCreatedAt();
+
+        List<MemberSurveyMapping> memberRegionMappingList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        assertThat(memberRegionMappingList.get(0), is(givenMemberSurveyMapping));
+
+        doReturn(localDateTimeWrongYear).when(givenMemberSurveyMapping).getCreatedAt();
+        List<MemberSurveyMapping> memberRegionMappingWrongYearList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        assertThat(memberRegionMappingWrongYearList, is(List.of()));
+
+        doReturn(localDateTimeWrongMonth).when(givenMemberSurveyMapping).getCreatedAt();
+        List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        assertThat(memberRegionMappingWrongMonthList, is(List.of()));
+
+        doReturn(localDateTimeWrongDays).when(givenMemberSurveyMapping).getCreatedAt();
+        List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        assertThat(memberRegionMappingWrongDaysList, is(List.of()));
     }
 
     @Test
