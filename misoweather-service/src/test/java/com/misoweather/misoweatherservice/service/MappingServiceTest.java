@@ -137,4 +137,39 @@ public class MappingServiceTest {
         assertThat(answerStatusDtoList.get(0).getAnswered(), is(Boolean.TRUE));
         assertThat(surveyIdList, is(List.of(9999L)));
     }
+
+
+    @Test
+    @DisplayName("filterMemberRegionMappingList(): 현재 날짜와 같은 mapping만 남도록 filter 한다.")
+    void filterMemberRegionMappingList() {
+        Member givenMember = Member.builder()
+                .socialId("12345")
+                .emoji("a")
+                .nickname("행복한 가짜광대")
+                .socialType("kakao")
+                .build();
+
+        Region givenRegion = spy(Region.class);
+
+        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
+                .region(givenRegion)
+                .member(givenMember)
+                .regionStatus(RegionEnum.DEFAULT)
+                .build();
+
+        List<MemberRegionMapping> memberRegionMappingList = List.of(memberRegionMapping);
+        List<MemberRegionMapping> memberRegionMappingEmptyList = List.of();
+
+        // when
+        MemberRegionMapping filteredMemberRegionMapping = mappingService.filterMemberRegionMappingList(memberRegionMappingList);
+        ApiCustomException exceptionThrown = Assertions.assertThrows(
+                ApiCustomException.class,
+                () -> {
+                    mappingService.filterMemberRegionMappingList(memberRegionMappingEmptyList);
+                }
+        );
+
+        assertThat(filteredMemberRegionMapping, is(memberRegionMappingList.get(0)));
+        assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
+    }
 }
