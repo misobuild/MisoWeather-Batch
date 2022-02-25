@@ -51,15 +51,4 @@ public class Comment extends Timestamped {
         this.deleted = deleted;
         this.emoji = emoji;
     }
-
-    @Builder
-    Comment(Long id, String content, String bigScale, String nickname, Member member, Boolean deleted, String emoji) {
-        this.id = id;
-        this.content = content;
-        this.bigScale = bigScale;
-        this.nickname = nickname;
-        this.member = member;
-        this.deleted = deleted;
-        this.emoji = emoji;
-    }
 }

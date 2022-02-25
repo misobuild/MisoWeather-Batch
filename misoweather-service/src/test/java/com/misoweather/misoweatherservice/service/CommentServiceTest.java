@@ -22,10 +22,10 @@ import java.util.List;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 
 //TODO assertThat 으로 교체
 @ExtendWith(MockitoExtension.class)
@@ -119,7 +119,7 @@ public class CommentServiceTest {
         List<Comment> commentListExist = commentService.getComments(1L, PageRequest.of(0,1));
         List<Comment> commentListNull = commentService.getComments(null, PageRequest.of(0,1));
 
-        assertThat(commentListNull, is(nullValue()));
+        assertThat(commentListNull, is(List.of()));
         assertThat(commentListExist.get(0), is(givenComment));
 
         verify(commentRepository, times(1)).findAllByOrderByIdDesc(any(Pageable.class));
@@ -147,5 +147,30 @@ public class CommentServiceTest {
         assertThat(secondResult, is(Boolean.TRUE));
         assertThat(thirdResult, is(Boolean.FALSE));
 
+    }
+
+    @Test
+    @DisplayName("getLastId()")
+    void getLastId(){
+        // given
+        Member givenMember = Member.builder()
+                .socialId("67890")
+                .emoji("b")
+                .nickname("우울한 진짜광대")
+                .socialType("apple")
+                .build();
+
+        Comment givenComment = spy(Comment.builder()
+                .content("안녕하세요")
+                .bigScale("서울")
+                .build());
+
+        List<Comment> caseOneList = List.of();
+        List<Comment> caseTwoList = List.of(givenComment);
+        doReturn(11L).when(givenComment).getId();
+
+        // when
+        assertThat(commentService.getLastId(caseOneList), is(nullValue()));
+        assertThat(commentService.getLastId(caseTwoList), is(11L));
     }
 }
