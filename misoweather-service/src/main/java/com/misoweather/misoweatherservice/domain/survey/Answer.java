@@ -23,7 +23,7 @@ public class Answer {
     private String description;
 
     @Column(nullable = false, name = "ANSWER" , columnDefinition = "varchar(10)")
-    private String answer;
+    private String content;
 
     @JsonIgnore
     @ManyToOne
