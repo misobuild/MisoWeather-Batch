@@ -172,4 +172,29 @@ public class MappingServiceTest {
         assertThat(filteredMemberRegionMapping, is(memberRegionMappingList.get(0)));
         assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
     }
+
+    @Test
+    @DisplayName("MappingService: getBigScale()")
+    void getBigScale(){
+        Region givenRegion = spy(Region.class);
+        doReturn("서울특별시").when(givenRegion).getBigScale();
+        Member givenMember = spy(Member.class);
+        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
+                .region(givenRegion)
+                .regionStatus(RegionEnum.DEFAULT)
+                .build();
+
+        given(memberRegionMappingRepository.findMemberRegionMappingByMember(givenMember)).willReturn(List.of(memberRegionMapping));
+
+        String bigScale = mappingService.getBigScale(givenMember);
+        ApiCustomException exceptionThrown = Assertions.assertThrows(
+                ApiCustomException.class,
+                () -> {
+                    mappingService.getBigScale(null);
+                }
+        );
+
+        assertThat(bigScale, is("서울특별시"));
+        assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
+    }
 }
