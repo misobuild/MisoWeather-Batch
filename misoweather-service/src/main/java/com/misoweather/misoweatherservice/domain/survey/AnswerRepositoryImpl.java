@@ -7,7 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.misoweather.misoweatherservice.domain.survey.QAnswer.answer1;
+import static com.misoweather.misoweatherservice.domain.survey.QAnswer.answer;
 import static com.misoweather.misoweatherservice.domain.survey.QSurvey.survey;
 
 public class AnswerRepositoryImpl implements AnswerRepositoryQueryDsl {
@@ -22,11 +22,12 @@ public class AnswerRepositoryImpl implements AnswerRepositoryQueryDsl {
     public List<AnswerSurveyJoinDto> findAnswerSurveyJoinBySurveyId(Long surveyId) {
         return queryFactory
                 .select(Projections.constructor(AnswerSurveyJoinDto.class,
-                        answer1.id, answer1.description, answer1.answer
-                , survey.id, survey.description, survey.title))
-                .from(answer1)
-                .join(answer1.survey, survey)
-                .where(answer1.survey.id.eq(surveyId))
+                        answer.id, answer.description, answer.answer
+                        , survey.id, survey.description, survey.title))
+                .from(answer)
+                .join(answer.survey, survey)
+                .where(answer.survey.id.eq(surveyId))
                 .fetch();
     }
+
 }
