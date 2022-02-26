@@ -123,6 +123,26 @@ public class MappingServiceTest {
     }
 
     @Test
+    @DisplayName("분기 검증 Wrong Days: member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
+    void filterMemberSurveyMappingListWhenWrongDays(){
+        Member givenMember = spy(Member.class);
+        Survey givenSurvey = spy(Survey.class);
+
+        MemberSurveyMapping givenMemberSurveyMapping = spy(MemberSurveyMapping.builder()
+                .survey(givenSurvey)
+                .member(givenMember)
+                .answer(null)
+                .shortBigScale(BigScaleEnum.getEnum("서울특별시").getShortValue())
+                .build());
+
+        given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
+        doReturn(LocalDateTime.now().minusDays(1)).when(givenMemberSurveyMapping).getCreatedAt();
+
+        List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        assertThat(memberRegionMappingWrongDaysList, is(List.of()));
+    }
+
+    @Test
     @DisplayName("MappingService: ifAnswerExist()")
     void ifAnswerExistWhen(){
         Member givenMember = spy(Member.class);
