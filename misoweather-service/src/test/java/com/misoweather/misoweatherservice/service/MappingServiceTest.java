@@ -197,4 +197,23 @@ public class MappingServiceTest {
         assertThat(bigScale, is("서울특별시"));
         assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
     }
+
+
+    @Test
+    @DisplayName("MappingService: buildMemeberRegionMapping()")
+    void buildMemberRegionMapping(){
+        // given
+        Member givenMember = Member.builder()
+                .socialId("12345")
+                .emoji("a")
+                .nickname("행복한 가짜광대")
+                .socialType("kakao")
+                .build();
+        Region givenRegion = spy(Region.class);
+        MemberRegionMapping memberRegionMapping = mappingService.buildMemberRegionMapping(givenMember, givenRegion);
+
+        assertThat(memberRegionMapping.getMember(), is(givenMember));
+        assertThat(memberRegionMapping.getRegion(), is(givenRegion));
+        assertThat(memberRegionMapping.getRegionStatus(), is(RegionEnum.DEFAULT));
+    }
 }
