@@ -1,9 +1,10 @@
 package com.misoweather.misoweatherservice.service;
 
-import com.misoweather.misoweatherservice.constants.BigScaleEnum;
+import com.misoweather.misoweatherservice.comment.service.CommentService;
+import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.comment.CommentRepository;
-import com.misoweather.misoweatherservice.utils.reader.ContentReader;
+import com.misoweather.misoweatherservice.global.reader.ContentReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,8 +42,9 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("getComments() 테스트")
+    @DisplayName("성공 테스트: getComments() 테스트")
     void getComments() {
+        // given
         Comment givenComment = Comment.builder()
                 .content(contentReader.checker("안녕하세요"))
                 .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
@@ -51,45 +53,62 @@ public class CommentServiceTest {
 
         given(commentRepository.findByIdLessThanOrderByIdDesc(anyLong(), any(Pageable.class))).willReturn(List.of(givenComment));
 
+        // when
         List<Comment> commentListExist = commentService.getComments(1L, PageRequest.of(0,1));
 
+        // then
         assertThat(commentListExist.get(0), is(givenComment));
     }
 
     @Test
-    @DisplayName("getComments() when commentListNull 테스트")
+    @DisplayName("분기 성공 테스트: getComments() when commentListNull 테스트")
     void getCommentsWhenListNull() {
+        // given
         given(commentRepository.findAllByOrderByIdDesc(any(Pageable.class))).willReturn(List.of());
 
+        // when
         List<Comment> commentListNull = commentService.getComments(null, PageRequest.of(0,1));
 
+        // then
         assertThat(commentListNull, is(List.of()));
     }
 
     @Test
-    @DisplayName("hasNext() 테스트")
-    void hasNextTest(){
-        given(commentRepository.existsByIdLessThan(0L)).willReturn(Boolean.FALSE);
-        given(commentRepository.existsByIdLessThan(1L)).willReturn(Boolean.TRUE);
+    @DisplayName("분기 성공 테스트: 코멘트의 다음 코멘트 있을 때 Boolean.TRUE 반환")
+    void hasNextTestHasNext(){
+        // given
+        given(commentRepository.existsByIdLessThan(0L)).willReturn(Boolean.TRUE);
 
-        Boolean firstResult = commentService.hasNext(0L);
-        Boolean secondResult = commentService.hasNext(1L);
+        // when
+        Boolean secondResult = commentService.hasNext(0L);
+
+        // then
+        assertThat(secondResult, is(Boolean.TRUE));
+    }
+
+    @Test
+    @DisplayName("분기 성공 테스트: 코멘트가 아예 하나도 존재하지 않을 때 Boolean.FALSE 반환")
+    void hasNextTestNothing(){
+        // given, when
         Boolean thirdResult = commentService.hasNext(null);
 
-        assertThat(firstResult, is(Boolean.FALSE));
-        assertThat(secondResult, is(Boolean.TRUE));
+        // then
         assertThat(thirdResult, is(Boolean.FALSE));
     }
 
     @Test
-    @DisplayName("getLastId()")
+    @DisplayName("성공 테스트: <Comment> givenComment의 id 값을 반환한다.")
     void getLastId(){
+        // given
         Comment givenComment = spy(Comment.class);
         doReturn(11L).when(givenComment).getId();
-        List<Comment> caseOneList = List.of();
-        List<Comment> caseTwoList = List.of(givenComment);
 
-        assertThat(commentService.getLastId(caseOneList), is(nullValue()));
-        assertThat(commentService.getLastId(caseTwoList), is(11L));
+        // when
+        Long caseOne = commentService.getLastId(List.of());
+        Long caseTwo = commentService.getLastId(List.of(givenComment));
+
+        // then
+        assertThat(caseOne, is(nullValue()));
+        assertThat(caseTwo, is(11L));
     }
 }
