@@ -43,8 +43,9 @@ public class MappingSurveyServiceTest {
     }
 
     @Test
-    @DisplayName("<Member>로 조회하여 (Enum)RegionStatus로 필터해 (String)bigScale 가져온다.")
+    @DisplayName("분기 성공 테스트: <Member>로 조회하여 (Enum)RegionStatus로 필터해 (String)bigScale 가져온다.")
     void filterMemberSurveyMappingList(){
+        // given
         Member givenMember = spy(Member.class);
         Survey givenSurvey = spy(Survey.class);
 
@@ -58,13 +59,17 @@ public class MappingSurveyServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now()).when(givenMemberSurveyMapping).getCreatedAt();
 
+        // when
         List<MemberSurveyMapping> memberRegionMappingList = mappingSurveyService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+
+        // then
         assertThat(memberRegionMappingList.get(0), is(givenMemberSurveyMapping));
     }
 
     @Test
-    @DisplayName("분기 검증 - Wrong Year: member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
+    @DisplayName("분기 성공 테스트 - Wrong Year: member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
     void filterMemberSurveyMappingListWhenWrongYear(){
+        // given
         Member givenMember = spy(Member.class);
         Survey givenSurvey = spy(Survey.class);
 
@@ -78,14 +83,17 @@ public class MappingSurveyServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now().minusYears(20)).when(givenMemberSurveyMapping).getCreatedAt();
 
+        // when
         List<MemberSurveyMapping> memberRegionMappingWrongYearList = mappingSurveyService.filterMemberSurveyMappingList(givenMember, givenSurvey);
 
+        // then
         assertThat(memberRegionMappingWrongYearList, is(List.of()));
     }
 
     @Test
-    @DisplayName("분기 검증 - Wrong Month: member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
+    @DisplayName("분기 성공 테스트 - Wrong Month: member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
     void filterMemberSurveyMappingListWhenWrongMonth(){
+        // given
         Member givenMember = spy(Member.class);
         Survey givenSurvey = spy(Survey.class);
 
@@ -99,13 +107,17 @@ public class MappingSurveyServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now().minusMonths(1)).when(givenMemberSurveyMapping).getCreatedAt();
 
+        // when
         List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingSurveyService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+
+        // then
         assertThat(memberRegionMappingWrongMonthList, is(List.of()));
     }
 
     @Test
-    @DisplayName("분기 검증 - Wrong Days: member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
+    @DisplayName("분기 성공 테스트 - Wrong Days: member로 조회하여 RegionStatus로 필터해 bigScale 가져온다.")
     void filterMemberSurveyMappingListWhenWrongDays(){
+        // given
         Member givenMember = spy(Member.class);
         Survey givenSurvey = spy(Survey.class);
 
@@ -119,13 +131,17 @@ public class MappingSurveyServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now().minusDays(1)).when(givenMemberSurveyMapping).getCreatedAt();
 
+        // when
         List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingSurveyService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+
+        // then
         assertThat(memberRegionMappingWrongDaysList, is(List.of()));
     }
 
     @Test
-    @DisplayName("분기 검증 - 존재하는 경우: 시간 조건에 맞는 <MemberSurveyMapping> 조회하여 존재하는지 확인한다.")
+    @DisplayName("분기 성공 테스트 - 존재하는 경우: 시간 조건에 맞는 <MemberSurveyMapping> 조회하여 존재하는지 확인한다.")
     void ifAnswerExistWhen(){
+        // given
         Member givenMember = spy(Member.class);
         doReturn(9999L).when(givenMember).getMemberId();
 
@@ -137,24 +153,33 @@ public class MappingSurveyServiceTest {
                 .build());
 
         given(memberSurveyMappingRepository.findByCreatedAtAfter(any(LocalDateTime.class))).willReturn(List.of(givenMemberSurveyMapping));
-        assertThat(mappingSurveyService.ifAnswerExist(givenMember), is(Boolean.TRUE));
+
+        // when
+        Boolean result = mappingSurveyService.ifAnswerExist(givenMember);
+
+        // then
+        assertThat(result, is(Boolean.TRUE));
     }
 
     @Test
-    @DisplayName("분기 검증 - 존재하지 않는 경우: 시간 조건에 맞는 <MemberSurveyMapping> 조회하여 존재하는지 확인한다.")
+    @DisplayName("분기 성공 테스트 - 존재하지 않는 경우: 시간 조건에 맞는 <MemberSurveyMapping> 조회하여 존재하는지 확인한다.")
     void ifAnswerExistWhenNotFound(){
+        // given
         Member givenMember = spy(Member.class);
         given(memberSurveyMappingRepository.findByCreatedAtAfter(any(LocalDateTime.class))).willReturn(List.of());
 
+        // when
         Boolean result = mappingSurveyService.ifAnswerExist(givenMember);
 
+        // then
         assertThat(result, is(Boolean.FALSE));
     }
 
 
     @Test
-    @DisplayName("<Member>, <Answer>, <Survey> 로 <MemberSurveyMapping> 빌드한다.")
+    @DisplayName("성공 테스트: <Member>, <Answer>, <Survey> 로 <MemberSurveyMapping> 빌드한다.")
     void buildFromFilteredMemberSurveyMappingList(){
+        // when
         Member givenMember = spy(Member.class);
         Answer givenAnswer = spy(Answer.class);
         Survey givenSurvey = spy(Survey.class);
@@ -172,8 +197,10 @@ public class MappingSurveyServiceTest {
 
         given(memberSurveyMappingRepository.findByMember(givenMember)).willReturn(List.of(givenMemberSurveyMapping));
 
+        // when
         List<AnswerStatusDto> answerStatusDtoList = mappingSurveyService.buildFromFilteredMemberSurveyMappingList(givenMember, surveyIdList);
 
+        // then
         assertThat(answerStatusDtoList.get(0).getSurveyId(), is(8888L));
         assertThat(answerStatusDtoList.get(0).getMemberAnswer(), is("안녕하세요"));
         assertThat(answerStatusDtoList.get(0).getAnswered(), is(Boolean.TRUE));

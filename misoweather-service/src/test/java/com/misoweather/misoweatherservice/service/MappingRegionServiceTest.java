@@ -64,7 +64,6 @@ public class MappingRegionServiceTest {
                 .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
     }
 
-    // 성공 실패 분리
     @Test
     @DisplayName("성공 테스트: <MemberRegionMapping>리스트로부터 filter 조건에 맞는 매핑을 찾아 해당 객체의 (String)bigScale을 리턴한다.")
     void getBigScale(){
