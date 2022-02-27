@@ -1,6 +1,6 @@
 package com.misoweather.misoweatherservice.domain.member_region_mapping;
 
-import com.misoweather.misoweatherservice.constants.RegionEnum;
+import com.misoweather.misoweatherservice.global.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.region.Region;
 import lombok.AccessLevel;

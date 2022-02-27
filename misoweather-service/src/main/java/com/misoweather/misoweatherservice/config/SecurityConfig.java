@@ -1,7 +1,7 @@
 package com.misoweather.misoweatherservice.config;
 
-import com.misoweather.misoweatherservice.auth.JwtAuthenticationFilter;
-import com.misoweather.misoweatherservice.auth.JwtTokenProvider;
+import com.misoweather.misoweatherservice.global.auth.JwtAuthenticationFilter;
+import com.misoweather.misoweatherservice.global.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

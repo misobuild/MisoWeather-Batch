@@ -1,6 +1,6 @@
 package com.misoweather.misoweatherservice.domain.survey;
 
-import com.misoweather.misoweatherservice.dto.response.survey.AnswerSurveyJoinDto;
+import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyJoinDto;
 
 import java.util.List;
 
