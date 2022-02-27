@@ -73,19 +73,6 @@ public class ComplexFlowService {
         return memberService.createToken(member);
     }
 
-    // CommentService
-    public CommentRegisterResponseDto registerComment(CommentRegisterRequestDto commentRegisterRequestDto, Member member){
-        String bigScale = mappingService.getBigScale(member);
-        commentService.saveComment(commentRegisterRequestDto.getContent(), member, bigScale);
-        return commentService.getAllCommentList();
-    }
-
-    public CommentListResponseDto getCommentList(Long commentId, Pageable page){
-        List<Comment> rawCommentList = commentService.getComments(commentId, page);
-        Long lasIdOfList = commentService.getLastId(rawCommentList);
-        return new CommentListResponseDto(rawCommentList, commentService.hasNext(lasIdOfList));
-    }
-
     // RegionService
     @Transactional
     public MemberRegionMapping updateRegion(Member member, Long regionId){
