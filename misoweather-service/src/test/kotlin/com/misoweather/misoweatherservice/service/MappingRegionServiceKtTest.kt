@@ -2,13 +2,19 @@ package com.misoweather.misoweatherservice.service
 
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository
+import com.misoweather.misoweatherservice.domain.region.Region
 import com.misoweather.misoweatherservice.global.constants.RegionEnum
+import com.misoweather.misoweatherservice.global.exception.ApiCustomException
 import com.misoweather.misoweatherservice.mapping.service.MappingRegionService
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 
+// java
 class MappingRegionServiceKtTest : BehaviorSpec(
         {
             val memberRegionMappingRepository = mockk<MemberRegionMappingRepository>()
@@ -22,11 +28,22 @@ class MappingRegionServiceKtTest : BehaviorSpec(
                     val actual = mappingRegionService.filterMemberRegionMappingList(memberRegionMappingList)
 
                     Then("사용자의 기본 상태 지역을 가져올 수 있다.") {
-                        actual.regionStatus.shouldBe(RegionEnum.DEFAULT)
+                        actual.regionStatus shouldBe RegionEnum.DEFAULT
                     }
                 }
             }
 
-            clearAllMocks()
+            Given("사용자-지역 리스트가 비어있을 때"){
+                val memberRegionMappingEmptyList = emptyList<MemberRegionMapping>()
+
+                When("현재 날짜 조건에 부합하는 필터링을 하면"){
+                    val actual = shouldThrow<ApiCustomException> {
+                        mappingRegionService.filterMemberRegionMappingList(memberRegionMappingEmptyList)
+                    }
+                    Then("NOT_FOUND 커스텀 에러가 발생한다."){
+                        actual.message shouldBe "NOT_FOUND"
+                    }
+                }
+            }
         }
 )
