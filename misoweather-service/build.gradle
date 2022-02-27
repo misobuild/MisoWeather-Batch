@@ -9,6 +9,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id 'jacoco'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
 }
 
 
@@ -69,16 +71,19 @@ dependencies {
 
     //bus-amqp
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+
+    // kotlin
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    testImplementation 'com.ninja-squad:springmockk:3.0.1'
+    testImplementation 'io.kotest:kotest-runner-junit5:5.0.3'
+    testImplementation 'io.kotest.extensions:kotest-extensions-spring:1.1.1'
+    testImplementation 'io.kotest:kotest-assertions-core-jvm:5.0.3'
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
 
 //querydsl 추가 시작
@@ -101,3 +106,89 @@ configurations {
     querydsl.extendsFrom compileClasspath
 }
 //querydsl 추가 끝
+
+test {
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacoco.exec")
+    }
+    useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+
+jacoco {
+    toolVersion = '0.8.5'
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        xml.enabled false
+        csv.enabled false
+
+      html.destination file("$buildDir/jacocoHtml")
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            // 'element'가 없으면 프로젝트의 전체 파일을 합친 값을 기준으로 한다.
+            limit {
+                // 'counter'를 지정하지 않으면 default는 'INSTRUCTION'
+                // 'value'를 지정하지 않으면 default는 'COVEREDRATIO'
+                minimum = 0.10
+            }
+        }
+
+        rule {
+            enabled = false
+            element = 'CLASS'
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.10
+            }
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.10
+            }
+
+            // 커버리지 체크를 제외할 클래스들
+            excludes = ["*.Q*"]
+//            excludes = [
+////                    '*.test.*',
+////                    '*.Kotlin*'
+//            ]
+        }
+    }
+}
+
+task testCoverage(type: Test) {
+    group 'verification'
+    description 'Runs the unit tests with coverage'
+
+    dependsOn(':test',
+            ':jacocoTestReport',
+            ':jacocoTestCoverageVerification')
+
+    tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+    tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+compileKotlin{
+    kotlinOptions{
+        jvmTarget = "11"
+    }
+}
+
+compileTestKotlin{
+    kotlinOptions{
+        jvmTarget = "11"
+    }
+}
