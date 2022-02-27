@@ -1,16 +1,15 @@
-package com.misoweather.misoweatherservice.mapping;
+package com.misoweather.misoweatherservice.member.service;
 
 import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.region.Region;
+import com.misoweather.misoweatherservice.mapping.MappingService;
 import com.misoweather.misoweatherservice.member.dto.DeleteMemberRequestDto;
 import com.misoweather.misoweatherservice.member.dto.LoginRequestDto;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.member.dto.SignUpRequestDto;
-import com.misoweather.misoweatherservice.member.service.MemberService;
 import com.misoweather.misoweatherservice.region.service.RegionService;
-import com.misoweather.misoweatherservice.survey.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +18,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ComplexFlowService {
+public class SimpleMemberService {
 
     private final MemberService memberService;
     private final MappingService mappingService;
     private final CommentService commentService;
     private final RegionService regionService;
-    private final SurveyService surveyService;
 
     // MemberService
     @Transactional
