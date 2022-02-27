@@ -4,6 +4,7 @@ import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
 import com.misoweather.misoweatherservice.domain.region.Region;
+import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.constants.RegionEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
 import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
@@ -39,7 +41,7 @@ public class MappingRegionServiceTest {
     }
 
     @Test
-    @DisplayName("현재 날짜 조건에 부합해야 하는 필터링 후, 반환된 <MemberRegionMapping> 리스트를 확인한다.")
+    @DisplayName("성공 테스트: 현재 날짜 조건에 부합해야 하는 필터링 후, 반환된 <MemberRegionMapping> 리스트를 확인한다.")
     void filterMemberRegionMappingList() {
         MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
                 .regionStatus(RegionEnum.DEFAULT)
@@ -52,23 +54,22 @@ public class MappingRegionServiceTest {
     }
 
     @Test
-    @DisplayName("현재 날짜 조건에 부합해야 하는 필터링 후, 반환된 <MemberRegionMapping> 리스트가 비어있을 때 에러가 발생한다.")
+    @DisplayName("실패 테스트: 현재 날짜 조건에 부합해야 하는 필터링 후, 반환된 <MemberRegionMapping> 리스트가 비어있을 때 에러가 발생한다.")
     void filterMemberRegionMappingListWhenListNull() {
+        // given
         List<MemberRegionMapping> memberRegionMappingEmptyList = List.of();
 
-        ApiCustomException exceptionThrown = Assertions.assertThrows(
-                ApiCustomException.class,
-                () -> {
-                    mappingRegionService.filterMemberRegionMappingList(memberRegionMappingEmptyList);
-                }
-        );
-
-        assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
+        // when, then
+        assertThatThrownBy(() -> mappingRegionService.filterMemberRegionMappingList(memberRegionMappingEmptyList))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
     }
 
+    // 성공 실패 분리
     @Test
-    @DisplayName("<MemberRegionMapping>리스트로부터 filter 조건에 맞는 매핑을 찾아 해당 객체의 (String)bigScale을 리턴한다.")
+    @DisplayName("성공 테스트: <MemberRegionMapping>리스트로부터 filter 조건에 맞는 매핑을 찾아 해당 객체의 (String)bigScale을 리턴한다.")
     void getBigScale(){
+        // given
         Region givenRegion = spy(Region.class);
         doReturn("서울특별시").when(givenRegion).getBigScale();
         Member givenMember = spy(Member.class);
@@ -79,6 +80,7 @@ public class MappingRegionServiceTest {
 
         given(memberRegionMappingRepository.findMemberRegionMappingByMember(givenMember)).willReturn(List.of(memberRegionMapping));
 
+        // when
         String bigScale = mappingRegionService.getBigScale(givenMember);
         ApiCustomException exceptionThrown = Assertions.assertThrows(
                 ApiCustomException.class,
@@ -93,7 +95,7 @@ public class MappingRegionServiceTest {
 
 
     @Test
-    @DisplayName("<Member>와 <Region>으로 <MemberRegionMapping>을 빌드한다.")
+    @DisplayName("성공 테스트: <Member>와 <Region>으로 <MemberRegionMapping>을 빌드한다.")
     void buildMemberRegionMapping(){
         // given
         Member givenMember = Member.builder()
@@ -103,8 +105,11 @@ public class MappingRegionServiceTest {
                 .socialType("kakao")
                 .build();
         Region givenRegion = spy(Region.class);
+
+        // when
         MemberRegionMapping memberRegionMapping = mappingRegionService.buildMemberRegionMapping(givenMember, givenRegion);
 
+        // then
         assertThat(memberRegionMapping.getMember(), is(givenMember));
         assertThat(memberRegionMapping.getRegion(), is(givenRegion));
         assertThat(memberRegionMapping.getRegionStatus(), is(RegionEnum.DEFAULT));
