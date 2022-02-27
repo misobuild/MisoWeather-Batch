@@ -8,7 +8,6 @@ import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.constants.RegionEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
 import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +54,7 @@ public class MappingRegionServiceTest {
 
     @Test
     @DisplayName("실패 테스트: 현재 날짜 조건에 부합해야 하는 필터링 후, 반환된 <MemberRegionMapping> 리스트가 비어있을 때 에러가 발생한다.")
-    void filterMemberRegionMappingListWhenListNull() {
+    void filterMemberRegionMappingListFail() {
         // given
         List<MemberRegionMapping> memberRegionMappingEmptyList = List.of();
 
@@ -82,15 +81,23 @@ public class MappingRegionServiceTest {
 
         // when
         String bigScale = mappingRegionService.getBigScale(givenMember);
-        ApiCustomException exceptionThrown = Assertions.assertThrows(
-                ApiCustomException.class,
-                () -> {
-                    mappingRegionService.getBigScale(null);
-                }
-        );
 
+        // then
         assertThat(bigScale, is("서울특별시"));
-        assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
+    }
+
+    @Test
+    @DisplayName("실패 테스트: <MemberRegionMapping> 리스트의 filter 조건에 맞는 매핑이 없으면 실패한다.")
+    void getBigScaleFail(){
+        // given
+        Member givenMember = spy(Member.class);
+
+        given(memberRegionMappingRepository.findMemberRegionMappingByMember(givenMember)).willReturn(List.of());
+
+        // when, then
+        assertThatThrownBy(() -> mappingRegionService.getBigScale(givenMember))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
     }
 
 
