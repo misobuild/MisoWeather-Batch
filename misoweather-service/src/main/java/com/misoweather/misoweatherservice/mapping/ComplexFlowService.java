@@ -1,30 +1,25 @@
 package com.misoweather.misoweatherservice.mapping;
 
 import com.misoweather.misoweatherservice.comment.service.CommentService;
-import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
-import com.misoweather.misoweatherservice.comment.dto.CommentRegisterRequestDto;
 import com.misoweather.misoweatherservice.global.api.ListDto;
 import com.misoweather.misoweatherservice.member.dto.DeleteMemberRequestDto;
 import com.misoweather.misoweatherservice.member.dto.LoginRequestDto;
 import com.misoweather.misoweatherservice.member.dto.SignUpRequestDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDto;
-import com.misoweather.misoweatherservice.comment.dto.CommentListResponseDto;
-import com.misoweather.misoweatherservice.comment.dto.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyResponseDto;
 import com.misoweather.misoweatherservice.global.utils.reader.SurveyReader;
 import com.misoweather.misoweatherservice.member.service.MemberService;
-import com.misoweather.misoweatherservice.region.RegionService;
+import com.misoweather.misoweatherservice.region.service.RegionService;
 import com.misoweather.misoweatherservice.survey.service.SurveyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,14 +66,6 @@ public class ComplexFlowService {
         memberService.checkToken(loginRequestDto.getSocialId(), loginRequestDto.getSocialType(), socialToken);
         Member member = memberService.getMember(loginRequestDto.getSocialId(), loginRequestDto.getSocialType());
         return memberService.createToken(member);
-    }
-
-    // RegionService
-    @Transactional
-    public MemberRegionMapping updateRegion(Member member, Long regionId){
-        Region targetRegion = regionService.getRegion(regionId);
-        List<MemberRegionMapping> memberRegionMappingList = mappingService.getMemberRegionMappingList(member);
-        return regionService.updateRegion(memberRegionMappingList, targetRegion);
     }
 
     // SurveyService

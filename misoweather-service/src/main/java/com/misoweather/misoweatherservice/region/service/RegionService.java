@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.region;
+package com.misoweather.misoweatherservice.region.service;
 
 import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
