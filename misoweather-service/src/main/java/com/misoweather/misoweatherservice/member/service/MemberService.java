@@ -1,6 +1,6 @@
 package com.misoweather.misoweatherservice.member.service;
 
-import com.misoweather.misoweatherservice.global.auth.JwtTokenProvider;
+import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
@@ -11,8 +11,8 @@ import com.misoweather.misoweatherservice.member.dto.SignUpRequestDto;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.member.dto.NicknameResponseDto;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.global.utils.factory.ValidatorFactory;
-import com.misoweather.misoweatherservice.global.utils.validator.Validator;
+import com.misoweather.misoweatherservice.member.validator.ValidatorFactory;
+import com.misoweather.misoweatherservice.member.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

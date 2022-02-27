@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.utils.validator;
+package com.misoweather.misoweatherservice.member.validator;
 
 import lombok.Getter;
 

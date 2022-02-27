@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.utils.validator;
+package com.misoweather.misoweatherservice.member.validator;
 
 import com.misoweather.misoweatherservice.global.utils.caller.KakaoAuthCaller;
 import lombok.AllArgsConstructor;

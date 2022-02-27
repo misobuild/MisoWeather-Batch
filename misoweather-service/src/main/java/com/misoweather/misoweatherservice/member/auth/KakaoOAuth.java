@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.auth;
+package com.misoweather.misoweatherservice.member.auth;
 
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;

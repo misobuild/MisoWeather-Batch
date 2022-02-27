@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.auth;
+package com.misoweather.misoweatherservice.member.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

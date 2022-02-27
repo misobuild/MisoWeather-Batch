@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.auth;
+package com.misoweather.misoweatherservice.member.auth;
 
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member.MemberRepository;
@@ -18,6 +18,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String userPk){
         Member member = memberRepository.findById(Long.parseLong(userPk))
                 .orElseThrow(() -> new UsernameNotFoundException("NOTFOUND"));
-        return new com.misoweather.misoweatherservice.global.auth.UserDetailsImpl(member);
+        return new UserDetailsImpl(member);
     }
 }

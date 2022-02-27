@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.auth;
+package com.misoweather.misoweatherservice.member.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.misoweather.misoweatherservice.domain.member.Member;

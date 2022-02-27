@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.auth;
+package com.misoweather.misoweatherservice.member.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

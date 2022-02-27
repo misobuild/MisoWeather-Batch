@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.utils.validator;
+package com.misoweather.misoweatherservice.member.validator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
