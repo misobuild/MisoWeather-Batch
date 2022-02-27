@@ -42,7 +42,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("성공 테스트: getComments() 테스트")
+    @DisplayName("성공 테스트: <PageRequest>와 크기에 맞는 <Comment>리스트를 반환한다.")
     void getComments() {
         // given
         Comment givenComment = Comment.builder()
@@ -61,7 +61,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("분기 성공 테스트: getComments() when commentListNull 테스트")
+    @DisplayName("분기 성공 테스트: <PageRequest>와 크기에 맞는 <Comment>리스트가 empty 리스트이다.")
     void getCommentsWhenListNull() {
         // given
         given(commentRepository.findAllByOrderByIdDesc(any(Pageable.class))).willReturn(List.of());
@@ -74,7 +74,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("분기 성공 테스트: 코멘트의 다음 코멘트 있을 때 Boolean.TRUE 반환")
+    @DisplayName("분기 성공 테스트: <Comment>의 다음 코멘트 있을 때 Boolean.TRUE 반환한다.")
     void hasNextTestHasNext(){
         // given
         given(commentRepository.existsByIdLessThan(0L)).willReturn(Boolean.TRUE);
@@ -87,7 +87,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("분기 성공 테스트: 코멘트가 아예 하나도 존재하지 않을 때 Boolean.FALSE 반환")
+    @DisplayName("분기 성공 테스트: <Comment>가 null 일 때 Boolean.FALSE 반환한다.")
     void hasNextTestNothing(){
         // given, when
         Boolean thirdResult = commentService.hasNext(null);
