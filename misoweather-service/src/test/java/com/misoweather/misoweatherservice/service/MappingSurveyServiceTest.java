@@ -1,7 +1,7 @@
 package com.misoweather.misoweatherservice.service;
 
-import com.misoweather.misoweatherservice.constants.BigScaleEnum;
-import com.misoweather.misoweatherservice.constants.RegionEnum;
+import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
+import com.misoweather.misoweatherservice.global.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
@@ -10,8 +10,10 @@ import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSur
 import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
-import com.misoweather.misoweatherservice.dto.response.survey.AnswerStatusDto;
-import com.misoweather.misoweatherservice.exception.ApiCustomException;
+import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
+import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
+import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
+import com.misoweather.misoweatherservice.mapping.service.MappingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,11 +44,11 @@ public class MappingServiceTest {
     @Mock
     private MemberRegionMappingRepository memberRegionMappingRepository;
     @InjectMocks
-    private MappingService mappingService;
+    private MappingRegionService mappingRegionService;
 
     @BeforeEach
     void setUp(){
-        this.mappingService = new MappingService(memberRegionMappingRepository, memberSurveyMappingRepository);
+        this.mappingRegionService = new MappingService(memberRegionMappingRepository, memberSurveyMappingRepository);
     }
 
     @Test
@@ -65,19 +67,19 @@ public class MappingServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now()).when(givenMemberSurveyMapping).getCreatedAt();
 
-        List<MemberSurveyMapping> memberRegionMappingList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        List<MemberSurveyMapping> memberRegionMappingList = mappingRegionService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingList.get(0), is(givenMemberSurveyMapping));
 
         doReturn(LocalDateTime.now().minusYears(20)).when(givenMemberSurveyMapping).getCreatedAt();
-        List<MemberSurveyMapping> memberRegionMappingWrongYearList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        List<MemberSurveyMapping> memberRegionMappingWrongYearList = mappingRegionService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongYearList, is(List.of()));
 
         doReturn(LocalDateTime.now().minusMonths(1)).when(givenMemberSurveyMapping).getCreatedAt();
-        List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingRegionService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongMonthList, is(List.of()));
 
         doReturn(LocalDateTime.now().minusDays(1)).when(givenMemberSurveyMapping).getCreatedAt();
-        List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingRegionService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongDaysList, is(List.of()));
     }
 
@@ -97,7 +99,7 @@ public class MappingServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now().minusYears(20)).when(givenMemberSurveyMapping).getCreatedAt();
 
-        List<MemberSurveyMapping> memberRegionMappingWrongYearList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        List<MemberSurveyMapping> memberRegionMappingWrongYearList = mappingRegionService.filterMemberSurveyMappingList(givenMember, givenSurvey);
 
         assertThat(memberRegionMappingWrongYearList, is(List.of()));
     }
@@ -118,7 +120,7 @@ public class MappingServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now().minusMonths(1)).when(givenMemberSurveyMapping).getCreatedAt();
 
-        List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingRegionService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongMonthList, is(List.of()));
     }
 
@@ -138,7 +140,7 @@ public class MappingServiceTest {
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
         doReturn(LocalDateTime.now().minusDays(1)).when(givenMemberSurveyMapping).getCreatedAt();
 
-        List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingService.filterMemberSurveyMappingList(givenMember, givenSurvey);
+        List<MemberSurveyMapping> memberRegionMappingWrongDaysList = mappingRegionService.filterMemberSurveyMappingList(givenMember, givenSurvey);
         assertThat(memberRegionMappingWrongDaysList, is(List.of()));
     }
 
@@ -203,34 +205,28 @@ public class MappingServiceTest {
     @Test
     @DisplayName("filterMemberRegionMappingList(): 현재 날짜와 같은 mapping만 남도록 filter 한다.")
     void filterMemberRegionMappingList() {
-        Member givenMember = Member.builder()
-                .socialId("12345")
-                .emoji("a")
-                .nickname("행복한 가짜광대")
-                .socialType("kakao")
-                .build();
-
-        Region givenRegion = spy(Region.class);
-
         MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-                .region(givenRegion)
-                .member(givenMember)
                 .regionStatus(RegionEnum.DEFAULT)
                 .build();
-
         List<MemberRegionMapping> memberRegionMappingList = List.of(memberRegionMapping);
+
+        MemberRegionMapping filteredMemberRegionMapping = mappingRegionService.filterMemberRegionMappingList(memberRegionMappingList);
+
+        assertThat(filteredMemberRegionMapping, is(memberRegionMappingList.get(0)));
+    }
+
+    @Test
+    @DisplayName("filterMemberRegionMappingList(): 현재 날짜와 같은 mapping만 남도록 filter 한다.")
+    void filterMemberRegionMappingListWhenListNull() {
         List<MemberRegionMapping> memberRegionMappingEmptyList = List.of();
 
-        // when
-        MemberRegionMapping filteredMemberRegionMapping = mappingService.filterMemberRegionMappingList(memberRegionMappingList);
         ApiCustomException exceptionThrown = Assertions.assertThrows(
                 ApiCustomException.class,
                 () -> {
-                    mappingService.filterMemberRegionMappingList(memberRegionMappingEmptyList);
+                    mappingRegionService.filterMemberRegionMappingList(memberRegionMappingEmptyList);
                 }
         );
 
-        assertThat(filteredMemberRegionMapping, is(memberRegionMappingList.get(0)));
         assertThat(exceptionThrown.getMessage(), is("NOT_FOUND"));
     }
 
@@ -247,11 +243,11 @@ public class MappingServiceTest {
 
         given(memberRegionMappingRepository.findMemberRegionMappingByMember(givenMember)).willReturn(List.of(memberRegionMapping));
 
-        String bigScale = mappingService.getBigScale(givenMember);
+        String bigScale = mappingRegionService.getBigScale(givenMember);
         ApiCustomException exceptionThrown = Assertions.assertThrows(
                 ApiCustomException.class,
                 () -> {
-                    mappingService.getBigScale(null);
+                    mappingRegionService.getBigScale(null);
                 }
         );
 
@@ -271,7 +267,7 @@ public class MappingServiceTest {
                 .socialType("kakao")
                 .build();
         Region givenRegion = spy(Region.class);
-        MemberRegionMapping memberRegionMapping = mappingService.buildMemberRegionMapping(givenMember, givenRegion);
+        MemberRegionMapping memberRegionMapping = mappingRegionService.buildMemberRegionMapping(givenMember, givenRegion);
 
         assertThat(memberRegionMapping.getMember(), is(givenMember));
         assertThat(memberRegionMapping.getRegion(), is(givenRegion));

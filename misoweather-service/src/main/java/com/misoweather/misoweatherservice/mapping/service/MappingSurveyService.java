@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.mapping;
+package com.misoweather.misoweatherservice.mapping.service;
 
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.constants.RegionEnum;
@@ -24,18 +24,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class MappingService {
+public class MappingSurveyService {
     private final MemberRegionMappingRepository memberRegionMappingRepository;
     private final MemberSurveyMappingRepository memberSurveyMappingRepository;
-
-    public List<MemberRegionMapping> getMemberRegionMappingList(Member member) {
-        return memberRegionMappingRepository.findMemberRegionMappingByMember(member);
-    }
-
-    public void deleteMemberRegion(Member member) {
-        List<MemberRegionMapping> memberRegionMappingList = memberRegionMappingRepository.findMemberRegionMappingByMember(member);
-        memberRegionMappingRepository.deleteAll(memberRegionMappingList);
-    }
 
     public void saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping) {
         memberSurveyMappingRepository.save(memberSurveyMapping);
@@ -51,49 +42,12 @@ public class MappingService {
                 .of(LocalDate.now().minusDays(days), LocalTime.of(23, 59)));
     }
 
-    public String getBigScale(Member member) {
-        return memberRegionMappingRepository.findMemberRegionMappingByMember(member).stream()
-                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
-                .map(item -> item.getRegion().getBigScale())
-                .findFirst()
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
-    }
-
     public List<MemberSurveyMapping> filterMemberSurveyMappingList(Member member, Survey survey) {
         return memberSurveyMappingRepository.findByMemberAndSurvey(member, survey).stream()
                 .filter(item -> item.getCreatedAt().getYear() == LocalDate.now().getYear())
                 .filter(item -> item.getCreatedAt().getMonth() == LocalDate.now().getMonth())
                 .filter(item -> item.getCreatedAt().getDayOfMonth() == LocalDate.now().getDayOfMonth())
                 .collect(Collectors.toList());
-    }
-
-    public MemberRegionMapping buildMemberRegionMappingAndSave(Member member, Region region) {
-        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-                .regionStatus(RegionEnum.DEFAULT)
-                .member(member)
-                .region(region)
-                .build();
-
-        return memberRegionMappingRepository.save(memberRegionMapping);
-    }
-
-    public MemberRegionMapping buildMemberRegionMapping(Member member, Region region) {
-        return MemberRegionMapping.builder()
-                .regionStatus(RegionEnum.DEFAULT)
-                .member(member)
-                .region(region)
-                .build();
-    }
-
-    public MemberRegionMapping saveMemberRegionmapping(MemberRegionMapping memberRegionMapping){
-        return memberRegionMappingRepository.save(memberRegionMapping);
-    }
-
-    public MemberRegionMapping filterMemberRegionMappingList(List<MemberRegionMapping> rawList) {
-        return rawList.stream()
-                .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
-                .findFirst()
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
     }
 
     public List<AnswerStatusDto> buildFromFilteredMemberSurveyMappingList(Member member, List<Long> surveyIdList) {

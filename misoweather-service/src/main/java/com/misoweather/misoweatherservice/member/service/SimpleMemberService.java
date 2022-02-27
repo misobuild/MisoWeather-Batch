@@ -4,7 +4,8 @@ import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.region.Region;
-import com.misoweather.misoweatherservice.mapping.MappingService;
+import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
+import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
 import com.misoweather.misoweatherservice.member.dto.DeleteMemberRequestDto;
 import com.misoweather.misoweatherservice.member.dto.LoginRequestDto;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
@@ -21,7 +22,8 @@ import java.util.List;
 public class SimpleMemberService {
 
     private final MemberService memberService;
-    private final MappingService mappingService;
+    private final MappingSurveyService mappingService;
+    private final MappingRegionService mappingRegionService;
     private final CommentService commentService;
     private final RegionService regionService;
 
@@ -32,7 +34,7 @@ public class SimpleMemberService {
         memberService.checkExistence(signUpRequestDto.getSocialId(), signUpRequestDto.getSocialType(), signUpRequestDto.getNickname());
         Member registeredMember = memberService.buildMemberAndSave(signUpRequestDto);
         Region defaultRegion = regionService.getRegion(signUpRequestDto.getDefaultRegionId());
-        mappingService.buildMemberRegionMappingAndSave(registeredMember, defaultRegion);
+        mappingRegionService.buildMemberRegionMappingAndSave(registeredMember, defaultRegion);
         return registeredMember;
     }
 
@@ -40,13 +42,13 @@ public class SimpleMemberService {
         Member member = memberService.getMember(deleteMemberRequestDto.getSocialId(), deleteMemberRequestDto.getSocialType());
         memberService.deleteMember(member);
         mappingService.deleteMemberSurvey(member);
-        mappingService.deleteMemberRegion(member);
+        mappingRegionService.deleteMemberRegion(member);
         commentService.deleteAll(member);
     }
 
     public MemberInfoResponseDto getMemberInfo(Member member){
-        List<MemberRegionMapping> memberRegionMappingList = mappingService.getMemberRegionMappingList(member);
-        MemberRegionMapping memberRegionMapping = mappingService.filterMemberRegionMappingList(memberRegionMappingList);
+        List<MemberRegionMapping> memberRegionMappingList = mappingRegionService.getMemberRegionMappingList(member);
+        MemberRegionMapping memberRegionMapping = mappingRegionService.filterMemberRegionMappingList(memberRegionMappingList);
         return memberService.buildMemberInfoResponse(member, memberRegionMapping);
     }
 

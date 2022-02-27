@@ -6,7 +6,7 @@ import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.global.api.ListDto;
 import com.misoweather.misoweatherservice.global.utils.reader.SurveyReader;
-import com.misoweather.misoweatherservice.mapping.MappingService;
+import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyResponseDto;
@@ -22,7 +22,7 @@ public class SimpleSurveyService {
     private static final Long recentDays = 7L;
 
     private final SurveyService surveyService;
-    private final MappingService mappingService;
+    private final MappingSurveyService mappingService;
 
     public AnswerSurveyResponseDto answerSurvey(Member member, AnswerSurveyDto answerSurveyDto){
         Answer answer = surveyService.getAnswer(answerSurveyDto);

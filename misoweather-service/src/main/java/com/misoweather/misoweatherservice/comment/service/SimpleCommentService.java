@@ -5,7 +5,7 @@ import com.misoweather.misoweatherservice.comment.dto.CommentRegisterRequestDto;
 import com.misoweather.misoweatherservice.comment.dto.CommentRegisterResponseDto;
 import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.member.Member;
-import com.misoweather.misoweatherservice.mapping.MappingService;
+import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,11 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SimpleCommentService {
 
-    private final MappingService mappingService;
+    private final MappingRegionService mappingRegionService;
     private final CommentService commentService;
 
     public CommentRegisterResponseDto registerComment(CommentRegisterRequestDto commentRegisterRequestDto, Member member){
-        String bigScale = mappingService.getBigScale(member);
+        String bigScale = mappingRegionService.getBigScale(member);
         commentService.saveComment(commentRegisterRequestDto.getContent(), member, bigScale);
         return commentService.getAllCommentList();
     }
