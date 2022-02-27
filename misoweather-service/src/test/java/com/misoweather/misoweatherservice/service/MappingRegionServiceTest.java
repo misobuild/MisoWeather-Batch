@@ -40,19 +40,6 @@ public class MappingRegionServiceTest {
     }
 
     @Test
-    @DisplayName("성공 테스트: 현재 날짜 조건에 부합해야 하는 필터링 후, 반환된 <MemberRegionMapping> 리스트를 확인한다.")
-    void filterMemberRegionMappingList() {
-        MemberRegionMapping memberRegionMapping = MemberRegionMapping.builder()
-                .regionStatus(RegionEnum.DEFAULT)
-                .build();
-        List<MemberRegionMapping> memberRegionMappingList = List.of(memberRegionMapping);
-
-        MemberRegionMapping filteredMemberRegionMapping = mappingRegionService.filterMemberRegionMappingList(memberRegionMappingList);
-
-        assertThat(filteredMemberRegionMapping, is(memberRegionMappingList.get(0)));
-    }
-
-    @Test
     @DisplayName("실패 테스트: 현재 날짜 조건에 부합해야 하는 필터링 후, 반환된 <MemberRegionMapping> 리스트가 비어있을 때 에러가 발생한다.")
     void filterMemberRegionMappingListFail() {
         // given
