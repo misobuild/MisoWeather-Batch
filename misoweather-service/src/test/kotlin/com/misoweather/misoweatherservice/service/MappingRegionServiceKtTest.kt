@@ -2,19 +2,15 @@ package com.misoweather.misoweatherservice.service
 
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository
-import com.misoweather.misoweatherservice.domain.region.Region
 import com.misoweather.misoweatherservice.global.constants.RegionEnum
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException
 import com.misoweather.misoweatherservice.mapping.service.MappingRegionService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 
-// java
+// lombok을 kotlin이 활용하지 못하는 문제 발생
 class MappingRegionServiceKtTest : BehaviorSpec(
         {
             val memberRegionMappingRepository = mockk<MemberRegionMappingRepository>()

@@ -1,10 +1,10 @@
 package com.misoweather.misoweatherservice.domain.comment;
 
-import com.misoweather.misoweatherservice.constants.BigScaleEnum;
+import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member.MemberRepository;
-import com.misoweather.misoweatherservice.service.CommentService;
-import com.misoweather.misoweatherservice.utils.reader.ContentReader;
+import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
+import com.misoweather.misoweatherservice.global.reader.ContentReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -93,9 +93,8 @@ public class CommentRepositoryTest {
         assertThat(foundCommentList.get(0), is(savedComment));
     }
 
-
     @Test
-    @DisplayName("CommentRepository: givenMember의 코멘트 모두 지운다")
+    @DisplayName("성공 givenMember의 코멘트 모두 지운다")
     void deleteAll(){
         // given
         Member givenMember = Member.builder()
@@ -123,7 +122,4 @@ public class CommentRepositoryTest {
         // then
         assertThat(commentRepository.findByMember(givenMember), iterableWithSize(0));
     }
-
-
-
 }
