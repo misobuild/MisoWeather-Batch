@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.member;
+package com.misoweather.misoweatherservice.member.service;
 
 import com.misoweather.misoweatherservice.global.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;

@@ -9,7 +9,6 @@ import com.misoweather.misoweatherservice.domain.survey.AnswerRepository;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.domain.survey.SurveyRepository;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDto;
-import com.misoweather.misoweatherservice.dto.response.ListDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyJoinDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyResponseDto;

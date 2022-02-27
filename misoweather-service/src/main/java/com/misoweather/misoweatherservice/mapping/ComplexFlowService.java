@@ -20,7 +20,7 @@ import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyResponseDto;
 import com.misoweather.misoweatherservice.global.utils.reader.SurveyReader;
-import com.misoweather.misoweatherservice.member.MemberService;
+import com.misoweather.misoweatherservice.member.service.MemberService;
 import com.misoweather.misoweatherservice.region.RegionService;
 import com.misoweather.misoweatherservice.survey.service.SurveyService;
 import lombok.RequiredArgsConstructor;
