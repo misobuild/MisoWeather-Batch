@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.utils.reader;
+package com.misoweather.misoweatherservice.region.reader;
 
 import com.misoweather.misoweatherservice.domain.region.Region;
 import org.springframework.stereotype.Component;

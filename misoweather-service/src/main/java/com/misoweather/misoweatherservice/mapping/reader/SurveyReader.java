@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.utils.reader;
+package com.misoweather.misoweatherservice.mapping.reader;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;

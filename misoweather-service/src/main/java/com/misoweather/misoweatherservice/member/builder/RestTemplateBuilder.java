@@ -1,14 +1,12 @@
-package com.misoweather.misoweatherservice.global.utils.builder;
+package com.misoweather.misoweatherservice.member.builder;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-
-abstract class NewRestTemplateBuilder {
-    public URI url;
+abstract class RestTemplateBuilder {
+    public String url;
     public String bearerToken;
     public String contentType;
     public HttpHeaders headers;

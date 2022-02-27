@@ -8,7 +8,7 @@ import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.region.RegionRepository;
 import com.misoweather.misoweatherservice.region.dto.RegionResponseDto;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.global.utils.reader.RegionReader;
+import com.misoweather.misoweatherservice.region.reader.RegionReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

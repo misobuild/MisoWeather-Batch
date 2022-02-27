@@ -5,7 +5,7 @@ import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSur
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.global.api.ListDto;
-import com.misoweather.misoweatherservice.global.utils.reader.SurveyReader;
+import com.misoweather.misoweatherservice.mapping.reader.SurveyReader;
 import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDto;

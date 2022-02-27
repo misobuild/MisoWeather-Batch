@@ -1,26 +1,23 @@
-package com.misoweather.misoweatherservice.global.utils.builder;
+package com.misoweather.misoweatherservice.member.builder;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * identityToken의 RSA 검증을 위해 요청을 보낼 객체를 만듭니다.
- *
- * @author yeon
-**/
-public class AppleAuthCallBuilder extends RestTemplateBuilder {
-    String appleAuthCheckURL = "https://appleid.apple.com/auth/keys";
+public class KakaoAuthCallBuilder extends RestTemplateBuilder {
+    String kakaoTokenCheckURL = "https://kapi.kakao.com/v1/user/access_token_info";
     String contentTypeValue = "application/x-www-form-urlencoded;charset=utf-8";
 
     @Override
     public void addHeader() {
+        headers.add("Authorization", "Bearer " + bearerToken);
         headers.add("Content-type", contentType);
     }
 
-    public AppleAuthCallBuilder() {
+    public KakaoAuthCallBuilder(String socialToken) {
         headers = new HttpHeaders();
         restTemplate = new RestTemplate();
-        url = appleAuthCheckURL;
+        url = kakaoTokenCheckURL;
+        bearerToken = socialToken;
         contentType = contentTypeValue;
     }
 }

@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.global.utils.caller;
+package com.misoweather.misoweatherservice.member.caller;
 
 import org.json.JSONObject;
 

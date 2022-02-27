@@ -5,7 +5,7 @@ import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.comment.CommentRepository;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.comment.dto.CommentRegisterResponseDto;
-import com.misoweather.misoweatherservice.global.utils.reader.ContentReader;
+import com.misoweather.misoweatherservice.global.reader.ContentReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

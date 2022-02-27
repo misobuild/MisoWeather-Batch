@@ -1,8 +1,8 @@
-package com.misoweather.misoweatherservice.global.utils.caller;
+package com.misoweather.misoweatherservice.member.caller;
 
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.global.utils.builder.AppleAuthCallBuilder;
+import com.misoweather.misoweatherservice.member.builder.KakaoAuthCallBuilder;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
@@ -11,17 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 @AllArgsConstructor
-public class AppleAuthCaller implements ApiCaller {
+public class KakaoAuthCaller implements ApiCaller {
+    String socialToken;
+
     public JSONObject call() {
-        AppleAuthCallBuilder appleAuthCallBuilder = new AppleAuthCallBuilder();
-        appleAuthCallBuilder.addHeader();
-        appleAuthCallBuilder.setHttpEntityHeader();
+        KakaoAuthCallBuilder kakaoAuthCallBuilder = new KakaoAuthCallBuilder(socialToken);
+        kakaoAuthCallBuilder.addHeader();
+        kakaoAuthCallBuilder.setHttpEntityHeader();
 
         try {
-            ResponseEntity<String> response = appleAuthCallBuilder.restTemplate.exchange(
-                    appleAuthCallBuilder.url,
+            ResponseEntity<String> response = kakaoAuthCallBuilder.restTemplate.exchange(
+                    kakaoAuthCallBuilder.url,
                     HttpMethod.GET,
-                    appleAuthCallBuilder.httpEntityHeader,
+                    kakaoAuthCallBuilder.httpEntityHeader,
                     String.class);
             return new JSONObject(response.getBody());
         } catch (HttpClientErrorException e) {

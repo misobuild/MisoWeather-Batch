@@ -13,7 +13,7 @@ import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyJoinDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyResponseDto;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.global.utils.reader.SurveyReader;
+import com.misoweather.misoweatherservice.mapping.reader.SurveyReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
