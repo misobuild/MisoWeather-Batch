@@ -18,7 +18,6 @@ import java.util.List;
 public class MappingRegionService {
 
     private final MemberRegionMappingRepository memberRegionMappingRepository;
-    private final MemberSurveyMappingRepository memberSurveyMappingRepository;
 
     public List<MemberRegionMapping> getMemberRegionMappingList(Member member) {
         return memberRegionMappingRepository.findMemberRegionMappingByMember(member);

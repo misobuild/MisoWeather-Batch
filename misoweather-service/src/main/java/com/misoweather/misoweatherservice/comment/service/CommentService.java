@@ -52,7 +52,9 @@ public class CommentService {
     }
 
     public Boolean hasNext(Long id) {
-        if (id == null) return false;
+        if (id == null) {
+            return Boolean.FALSE;
+        }
         return this.commentRepository.existsByIdLessThan(id);
     }
 }

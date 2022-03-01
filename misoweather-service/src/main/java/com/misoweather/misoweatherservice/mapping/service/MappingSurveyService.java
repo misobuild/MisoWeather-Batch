@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class MappingSurveyService {
-    private final MemberRegionMappingRepository memberRegionMappingRepository;
     private final MemberSurveyMappingRepository memberSurveyMappingRepository;
 
     public void saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping) {
