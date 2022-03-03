@@ -63,4 +63,32 @@ public class MappingRegionRepositoryTest {
         // then
         assertThat(actual, is(List.of(givenMemberRegionMapping)));
     }
+
+    @Test
+    @DisplayName("성공: <MemberRegionMapping> 리스트가 존재한다면 모두 삭제한다.")
+    void deleteMemberRegionTest(){
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+        Region givenRegion = entityManager.find(Region.class, 1L);
+
+        MemberRegionMapping givenMemberRegionMapping = MemberRegionMapping.builder()
+                .member(givenMember)
+                .region(givenRegion)
+                .regionStatus(RegionEnum.DEFAULT)
+                .build();
+        entityManager.persist(givenMemberRegionMapping);
+
+        // when
+        mappingRegionService.deleteMemberRegion(givenMember);
+
+        // then
+        assertThat(memberRegionRepository.findMemberRegionMappingByMember(givenMember), is(List.of()));
+    }
 }
