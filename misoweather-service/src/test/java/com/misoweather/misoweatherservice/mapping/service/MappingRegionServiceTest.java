@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.service;
+package com.misoweather.misoweatherservice.mapping.service;
 
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;

@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.service;
+package com.misoweather.misoweatherservice.comment.service;
 
 import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
