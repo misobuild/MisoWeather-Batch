@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.iterableWithSize;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -116,12 +115,14 @@ public class MappingRegionRepositoryTest {
         MemberRegionMapping actual = mappingRegionService.buildMemberRegionMappingAndSave(givenMember, givenRegion);
 
         // then
-        assertThat(actual, is(givenMemberRegionMapping));
+        assertThat(actual.getMember(), is(givenMember));
+        assertThat(actual.getRegion(), is(givenRegion));
+        assertThat(actual.getRegionStatus(), is(RegionEnum.DEFAULT));
     }
 
 
     @Test
-    @DisplayName("성공 테스트: <MemberRegionMapping>을 저장한다.")
+    @DisplayName("성공: <MemberRegionMapping>을 저장한다.")
     void saveMemberRegionMapping(){
         // given
         Member givenMember = Member.builder()
