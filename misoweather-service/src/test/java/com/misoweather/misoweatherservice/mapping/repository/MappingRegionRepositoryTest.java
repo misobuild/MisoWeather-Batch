@@ -91,4 +91,31 @@ public class MappingRegionRepositoryTest {
         // then
         assertThat(memberRegionRepository.findMemberRegionMappingByMember(givenMember), is(List.of()));
     }
+
+    @Test
+    @DisplayName("성공: <MemberRegionMapping> 빌드하여 저장한다.")
+    void buildMemberRegionMappingAndSave(){
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+        Region givenRegion = entityManager.find(Region.class, 1L);
+
+        MemberRegionMapping givenMemberRegionMapping = MemberRegionMapping.builder()
+                .member(givenMember)
+                .region(givenRegion)
+                .regionStatus(RegionEnum.DEFAULT)
+                .build();
+
+        // when
+        MemberRegionMapping actual = mappingRegionService.buildMemberRegionMappingAndSave(givenMember, givenRegion);
+
+        // then
+        assertThat(actual, is(givenMemberRegionMapping));
+    }
 }
