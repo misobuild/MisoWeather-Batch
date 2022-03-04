@@ -4,8 +4,8 @@ import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.region.Region;
-import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
+import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.member.dto.DeleteMemberRequestDto;
 import com.misoweather.misoweatherservice.member.dto.LoginRequestDto;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
@@ -22,7 +22,7 @@ import java.util.List;
 public class SimpleMemberService {
 
     private final MemberService memberService;
-    private final MappingSurveyService mappingService;
+    private final MappingSurveyService mappingSurveyService;
     private final MappingRegionService mappingRegionService;
     private final CommentService commentService;
     private final RegionService regionService;
@@ -41,7 +41,7 @@ public class SimpleMemberService {
     public void deleteMember(DeleteMemberRequestDto deleteMemberRequestDto){
         Member member = memberService.getMember(deleteMemberRequestDto.getSocialId(), deleteMemberRequestDto.getSocialType());
         memberService.deleteMember(member);
-        mappingService.deleteMemberSurvey(member);
+        mappingSurveyService.deleteMemberSurvey(member);
         mappingRegionService.deleteMemberRegion(member);
         commentService.deleteAll(member);
     }
