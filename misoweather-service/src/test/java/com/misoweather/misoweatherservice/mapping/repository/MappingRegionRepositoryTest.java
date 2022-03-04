@@ -105,12 +105,6 @@ public class MappingRegionRepositoryTest {
         entityManager.persist(givenMember);
         Region givenRegion = entityManager.find(Region.class, 1L);
 
-        MemberRegionMapping givenMemberRegionMapping = MemberRegionMapping.builder()
-                .member(givenMember)
-                .region(givenRegion)
-                .regionStatus(RegionEnum.DEFAULT)
-                .build();
-
         // when
         MemberRegionMapping actual = mappingRegionService.buildMemberRegionMappingAndSave(givenMember, givenRegion);
 
