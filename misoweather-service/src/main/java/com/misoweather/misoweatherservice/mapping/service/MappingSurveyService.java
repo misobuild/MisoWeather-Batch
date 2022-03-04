@@ -1,16 +1,10 @@
 package com.misoweather.misoweatherservice.mapping.service;
 
-import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
-import com.misoweather.misoweatherservice.global.constants.RegionEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
-import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
-import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMappingRepository;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
-import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
-import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,8 +21,8 @@ import java.util.stream.Collectors;
 public class MappingSurveyService {
     private final MemberSurveyMappingRepository memberSurveyMappingRepository;
 
-    public void saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping) {
-        memberSurveyMappingRepository.save(memberSurveyMapping);
+    public MemberSurveyMapping saveMemberSurveyMapping(MemberSurveyMapping memberSurveyMapping) {
+        return memberSurveyMappingRepository.save(memberSurveyMapping);
     }
 
     public void deleteMemberSurvey(Member member) {
