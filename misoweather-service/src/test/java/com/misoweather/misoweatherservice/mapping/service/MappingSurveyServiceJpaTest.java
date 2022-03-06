@@ -66,4 +66,35 @@ public class MappingSurveyServiceJpaTest {
         assertThat(actual.getAnswer(), is(givenAnswer));
         assertThat(actual.getShortBigScale(), is("서울"));
     }
+
+    @Test
+    @DisplayName("성공: <Member> 객체로 <MemberSurveyMapping> 삭제한다. ")
+    void deleteMemberSurvey() {
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+        Answer givenAnswer = entityManager.find(Answer.class, 1L);
+        Survey givenSurvey = entityManager.find(Survey.class, 1L);
+
+        MemberSurveyMapping givenMemberSurveyMapping = MemberSurveyMapping.builder()
+                .member(givenMember)
+                .answer(givenAnswer)
+                .survey(givenSurvey)
+                .shortBigScale("서울")
+                .build();
+        entityManager.persist(givenMemberSurveyMapping);
+
+        // when
+        mappingSurveyService.deleteMemberSurvey(givenMember);
+        List<MemberSurveyMapping> actual = memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey);
+
+        // then
+        assertThat(actual, is(List.of()));
+    }
 }
