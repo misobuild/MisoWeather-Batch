@@ -7,10 +7,12 @@ import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.constants.RegionEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
@@ -127,4 +130,22 @@ public class MappingRegionServiceTest {
         assertThat(actual.get(0).getMember(), is(givenMember));
         assertThat(actual.get(0).getRegion(), is(givenRegion));
     }
+
+    @Test
+    @DisplayName("성공: <MemberRegionMapping> 빌드하여 저장한다.")
+    void buildMemberRegionMappingAndSave(){
+        // given
+        Member givenMember = spy(Member.class);
+        Region givenRegion = spy(Region.class);
+        MemberRegionMapping givenMemberRegionMapping = MemberRegionMapping.builder().build();
+
+        // when
+        given(memberRegionMappingRepository.save(any(MemberRegionMapping.class))).willReturn(givenMemberRegionMapping);
+        MemberRegionMapping actual = mappingRegionService.buildMemberRegionMappingAndSave(givenMember, givenRegion);
+
+        // then
+        assertThat(actual, is(givenMemberRegionMapping));
+    }
+//
+//
 }
