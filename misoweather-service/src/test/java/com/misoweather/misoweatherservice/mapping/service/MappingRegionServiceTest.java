@@ -7,7 +7,6 @@ import com.misoweather.misoweatherservice.domain.region.Region;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.constants.RegionEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -106,5 +105,26 @@ public class MappingRegionServiceTest {
         assertThat(memberRegionMapping.getMember(), is(givenMember));
         assertThat(memberRegionMapping.getRegion(), is(givenRegion));
         assertThat(memberRegionMapping.getRegionStatus(), is(RegionEnum.DEFAULT));
+    }
+
+    @Test
+    @DisplayName("성공: <MemberRegionMapping>을 <Member>로 찾아서 반환한다.")
+    void findMemberRegionMappingByMember(){
+        // given
+        Member givenMember = spy(Member.class);
+        Region givenRegion = spy(Region.class);
+
+        MemberRegionMapping givenMemberRegionMapping = MemberRegionMapping.builder()
+                .member(givenMember)
+                .region(givenRegion)
+                .build();
+
+        // when
+        given(memberRegionMappingRepository.findMemberRegionMappingByMember(givenMember)).willReturn(List.of(givenMemberRegionMapping));
+        List<MemberRegionMapping> actual = mappingRegionService.getMemberRegionMappingList(givenMember);
+
+        // then
+        assertThat(actual.get(0).getMember(), is(givenMember));
+        assertThat(actual.get(0).getRegion(), is(givenRegion));
     }
 }

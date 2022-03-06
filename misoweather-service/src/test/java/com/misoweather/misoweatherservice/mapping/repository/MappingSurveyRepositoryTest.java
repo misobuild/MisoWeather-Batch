@@ -38,7 +38,7 @@ public class MappingSurveyRepositoryTest {
     }
 
     @Test
-    @DisplayName("성공: <Member> 객체로 <MemberRegionMapping> 리스트 찾아 반환한다.")
+    @DisplayName("성공: <Member> 객체로 <MemberSurveyMapping> 찾아 반환한다.")
     void saveMemberSurveyMapping(){
         // given
         Member givenMember = Member.builder()
@@ -70,7 +70,7 @@ public class MappingSurveyRepositoryTest {
     }
 
     @Test
-    @DisplayName("성공: <Member> 객체로 <MemberRegionMapping> 리스트 찾아 반환한다.")
+    @DisplayName("성공: <Member> 객체로 <MemberSurveyMapping> 삭제한다. ")
     void deleteMemberSurvey(){
         // given
         Member givenMember = Member.builder()
@@ -98,5 +98,38 @@ public class MappingSurveyRepositoryTest {
 
         // then
         assertThat(actual, is(List.of()));
+    }
+
+    @Test
+    @DisplayName("성공: 최근 (Long)days 만큼의 서베이를 찾아 반환한다.")
+    void getRecentSurveyListFor(){
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+        Answer givenAnswer = entityManager.find(Answer.class, 1L);
+        Survey givenSurvey = entityManager.find(Survey.class, 1L);
+
+        MemberSurveyMapping givenMemberSurveyMapping = MemberSurveyMapping.builder()
+                .member(givenMember)
+                .answer(givenAnswer)
+                .survey(givenSurvey)
+                .shortBigScale("서울")
+                .build();
+        entityManager.persist(givenMemberSurveyMapping);
+
+        // when
+        List<MemberSurveyMapping> actual = mappingSurveyService.getRecentSurveyListFor(1L);
+
+        // then
+        assertThat(actual.get(0).getSurvey(), is(givenSurvey));
+        assertThat(actual.get(0).getAnswer(), is(givenAnswer));
+        assertThat(actual.get(0).getMember(), is(givenMember));
+        assertThat(actual.get(0).getShortBigScale(), is("서울"));
     }
 }
