@@ -97,4 +97,42 @@ public class MappingSurveyServiceJpaTest {
         // then
         assertThat(actual, is(List.of()));
     }
+
+
+    @Test
+    @DisplayName("성공: 최근 (Long)days 만큼의 서베이를 찾아 반환한다.")
+    void getRecentSurveyListFor() {
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+        Answer givenAnswer = entityManager.find(Answer.class, 1L);
+        Survey givenSurvey = entityManager.find(Survey.class, 1L);
+
+        MemberSurveyMapping givenMemberSurveyMapping = MemberSurveyMapping.builder()
+                .member(givenMember)
+                .answer(givenAnswer)
+                .survey(givenSurvey)
+                .shortBigScale("서울")
+                .build();
+        entityManager.persist(givenMemberSurveyMapping);
+        // when
+        List<MemberSurveyMapping> actual = mappingSurveyService.getRecentSurveyListFor(1L)
+                .stream().sorted(Comparator.comparing(MemberSurveyMapping::getCreatedAt).reversed()).collect(Collectors.toList());
+
+        // then
+        assertThat(actual.get(0).getSurvey().getId(), is(givenSurvey.getId()));
+        assertThat(actual.get(0).getAnswer(), is(givenAnswer));
+        assertThat(actual.get(0).getMember(), is(givenMember));
+        assertThat(actual.get(0).getShortBigScale(), is("서울"));
+
+        entityManager.remove(givenMemberSurveyMapping);
+        entityManager.remove(givenMember);
+        entityManager.clear();
+    }
 }
