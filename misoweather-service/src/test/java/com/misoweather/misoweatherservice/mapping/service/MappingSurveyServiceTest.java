@@ -6,7 +6,6 @@ import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSur
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
-import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -179,7 +178,7 @@ public class MappingSurveyServiceTest {
     @Test
     @DisplayName("성공 테스트: <Member>, <Answer>, <Survey> 로 <MemberSurveyMapping> 빌드한다.")
     void buildFromFilteredMemberSurveyMappingList(){
-        // when
+        // given
         Member givenMember = spy(Member.class);
         Answer givenAnswer = spy(Answer.class);
         Survey givenSurvey = spy(Survey.class);
