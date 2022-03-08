@@ -129,6 +129,21 @@ jacocoTestReport {
       html.destination file("$buildDir/jacocoHtml")
     }
 
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/misoweatherservice/*ServiceApplication.class",
+                    "**/constants/*",
+                    "**/Simple*.*",
+                    "**/auth/*",
+                    "**/domain/*",
+                    "**/dto/*",
+                    "**/api/ListDto.class",
+                    "**/config/*"
+            ])
+        }))
+    }
+
     finalizedBy 'jacocoTestCoverageVerification'
 }
 
