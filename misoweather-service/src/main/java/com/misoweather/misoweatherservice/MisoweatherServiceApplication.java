@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableJpaAuditing
-public class MemberServiceApplication {
+public class MisoweatherServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MemberServiceApplication.class, args);
+        SpringApplication.run(MisoweatherServiceApplication.class, args);
     }
 
 }
