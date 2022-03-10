@@ -20,7 +20,7 @@ public class CommentService {
 
     public Comment saveComment(String content, Member member, String bigScale){
         Comment comment = Comment.builder()
-                .content(contentReader.checker(content))
+                .content(contentReader.check(content))
                 .bigScale(BigScaleEnum.getEnum(bigScale).toString())
                 .member(member)
                 .nickname(member.getNickname())

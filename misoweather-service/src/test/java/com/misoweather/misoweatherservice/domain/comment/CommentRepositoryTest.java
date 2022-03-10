@@ -47,7 +47,7 @@ public class CommentRepositoryTest {
         memberRepository.save(givenMember);
 
         Comment givenComment = Comment.builder()
-                .content(contentReader.checker("안녕하세요"))
+                .content(contentReader.check("안녕하세요"))
                 .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
                 .member(givenMember)
                 .nickname(givenMember.getNickname())
@@ -77,7 +77,7 @@ public class CommentRepositoryTest {
         memberRepository.save(givenMember);
 
         Comment givenComment = Comment.builder()
-                .content(contentReader.checker("안녕하세요"))
+                .content(contentReader.check("안녕하세요"))
                 .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
                 .member(givenMember)
                 .nickname(givenMember.getNickname())
@@ -107,7 +107,7 @@ public class CommentRepositoryTest {
         memberRepository.save(givenMember);
 
         Comment givenComment = Comment.builder()
-                .content(contentReader.checker("안녕하세요"))
+                .content(contentReader.check("안녕하세요"))
                 .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
                 .member(givenMember)
                 .nickname(givenMember.getNickname())

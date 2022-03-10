@@ -27,7 +27,7 @@ public class MappingSurveyRepositoryTest {
     private EntityManager entityManager;
 
     @Test
-    @DisplayName("어쩌구저쩌구")
+    @DisplayName("<Member>와 <Survey> 통해 ")
     void findByMemberAndSurvey(){
         // given
         Survey givenSurvey = entityManager.find(Survey.class, 1L);

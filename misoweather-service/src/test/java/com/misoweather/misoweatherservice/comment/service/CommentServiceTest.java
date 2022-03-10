@@ -1,6 +1,5 @@
 package com.misoweather.misoweatherservice.comment.service;
 
-import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
 import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.comment.CommentRepository;
@@ -46,7 +45,7 @@ public class CommentServiceTest {
     void getComments() {
         // given
         Comment givenComment = Comment.builder()
-                .content(contentReader.checker("안녕하세요"))
+                .content(contentReader.check("안녕하세요"))
                 .bigScale(BigScaleEnum.getEnum("서울특별시").toString())
                 .deleted(Boolean.FALSE)
                 .build();

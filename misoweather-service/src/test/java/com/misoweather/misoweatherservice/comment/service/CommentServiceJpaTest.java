@@ -37,7 +37,7 @@ public class CommentServiceJpaTest {
     }
 
     @Test
-    @DisplayName("<Comment> 빌드하여 저장소에 save() 한다.")
+    @DisplayName("성공: <Comment> 빌드하여 저장소에 save() 한다.")
     void saveComment(){
         // given
         Member givenMember = entityManager.find(Member.class, 304L);
@@ -54,7 +54,7 @@ public class CommentServiceJpaTest {
     }
 
     @Test
-    @DisplayName("<Comment> 리스트 찾아 반환한다.")
+    @DisplayName("성공: <Comment> 리스트 찾아 반환한다.")
     void getAllCommentList(){
         // given
         Comment foundComment = commentRepository.findAllByOrderByIdDesc(Pageable.ofSize(1)).get(0);
