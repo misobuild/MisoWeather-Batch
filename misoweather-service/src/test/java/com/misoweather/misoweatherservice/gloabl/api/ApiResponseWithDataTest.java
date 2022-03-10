@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+@DisplayName("Global-ApiResponseWithData 테스트")
 public class ApiResponseWithDataTest {
-    @Test
+
     @DisplayName("성공: <ApiResponseWithData> 객체를 빌드한다.")
     void build(){
         // given, when
