@@ -138,6 +138,7 @@ jacocoTestReport {
                     "**/auth/*",
                     "**/domain/*",
                     "**/dto/*",
+                    "**/api/Api**.*",
                     "**/api/ListDto.class",
                     "**/config/*"
             ])
