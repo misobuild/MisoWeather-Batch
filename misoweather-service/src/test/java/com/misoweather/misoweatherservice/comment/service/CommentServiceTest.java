@@ -25,7 +25,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-//TODO assertThat 으로 교체
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentService 테스트")
 public class CommentServiceTest {

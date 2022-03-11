@@ -3,7 +3,6 @@ package com.misoweather.misoweatherservice.global.constants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-// TODO 생성자 정의할 거면 하고 안할 거면 어노테이션 쓰고 하나만 하자
 @Getter
 @AllArgsConstructor
 public enum AirEnum {

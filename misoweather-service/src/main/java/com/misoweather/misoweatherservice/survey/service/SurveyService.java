@@ -44,7 +44,6 @@ public class SurveyService {
 
     public List<AnswerStatusDto> buildAnswerStatusNullDtoList(List<Long> surveyIdList) {
         return surveyIdList.stream()
-                // TODO 생성자 하나 더 만들어서 다를 경우 수행하는 게 달라지게 한다.
                 .map(item -> AnswerStatusDto.builder()
                         .surveyId(item)
                         .memberAnswer(null)
