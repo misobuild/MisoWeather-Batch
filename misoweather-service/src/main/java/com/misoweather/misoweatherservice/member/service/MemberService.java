@@ -94,6 +94,10 @@ public class MemberService {
                 .createToken(Long.toString(member.getMemberId()), member.getSocialId(), member.getSocialType());
     }
 
+    public Boolean ifMemberExistDelete(String socialId, String socialType) {
+        return memberRepository.findBySocialIdAndSocialType(socialId, socialType).isPresent();
+    }
+
     public void deleteMember(Member member) {
         memberRepository.delete(member);
     }
