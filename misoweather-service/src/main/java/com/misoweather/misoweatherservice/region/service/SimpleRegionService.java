@@ -21,6 +21,6 @@ public class SimpleRegionService {
     public MemberRegionMapping updateRegion(Member member, Long regionId){
         Region targetRegion = regionService.getRegion(regionId);
         List<MemberRegionMapping> memberRegionMappingList = mappingRegionService.getMemberRegionMappingList(member);
-        return regionService.updateRegion(memberRegionMappingList, targetRegion);
+        return regionService.updateEach(memberRegionMappingList, targetRegion);
     }
 }
