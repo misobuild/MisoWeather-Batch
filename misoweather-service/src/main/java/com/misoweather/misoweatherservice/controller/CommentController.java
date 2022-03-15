@@ -1,4 +1,4 @@
-package com.misoweather.misoweatherservice.controller;
+package com.misoweather.misoweatherservice.comment.presentation;
 
 import com.misoweather.misoweatherservice.comment.dto.CommentListResponseDto;
 import com.misoweather.misoweatherservice.comment.dto.CommentRegisterRequestDto;
