@@ -1,10 +1,8 @@
-package com.misoweather.misoweatherservice.gloabl.reader;
+package com.misoweather.misoweatherservice.global.reader;
 
-import com.misoweather.misoweatherservice.global.reader.ContentReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

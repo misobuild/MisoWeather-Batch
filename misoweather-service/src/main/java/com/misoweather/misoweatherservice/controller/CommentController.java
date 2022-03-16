@@ -1,9 +1,8 @@
-package com.misoweather.misoweatherservice.comment.presentation;
+package com.misoweather.misoweatherservice.controller;
 
 import com.misoweather.misoweatherservice.comment.dto.CommentListResponseDto;
 import com.misoweather.misoweatherservice.comment.dto.CommentRegisterRequestDto;
 import com.misoweather.misoweatherservice.comment.dto.CommentRegisterResponseDto;
-import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.comment.service.SimpleCommentService;
 import com.misoweather.misoweatherservice.global.api.ApiResponseWithData;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
     private static final Integer DEFAULT_SIZE = 21;
-    private final CommentService commentService;
     private final SimpleCommentService simpleCommentService;
 
     @ApiOperation(value = "코멘트 등록")
