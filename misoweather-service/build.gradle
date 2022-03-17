@@ -2,6 +2,10 @@ buildscript {
     ext {
         queryDslVersion = "5.0.0"
     }
+    repositories {
+        mavenCentral()
+    }
+
 }
 
 plugins {
@@ -11,9 +15,19 @@ plugins {
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'jacoco'
     id 'org.jetbrains.kotlin.jvm' version '1.6.21'
+    id "org.asciidoctor.convert" version "1.5.9.2"
 }
 
+asciidoctor {
+    dependsOn test
+}
 
+bootJar {
+    dependsOn asciidoctor
+    from ('$/html5') {
+        into 'static/docs'
+    }
+}
 
 group = 'com.misoweather'
 version = '0.0.1-SNAPSHOT'
@@ -40,11 +54,13 @@ dependencies {
 
     //Swagger
     implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
-    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.security:spring-security-test'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -60,6 +76,7 @@ dependencies {
     // JWT Token
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'org.json:json:20210307'
+    implementation group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.5.RELEASE'
 
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'com.nimbusds:nimbus-jose-jwt:9.15.2'
@@ -78,6 +95,8 @@ dependencies {
     testImplementation 'io.kotest:kotest-runner-junit5:5.0.3'
     testImplementation 'io.kotest.extensions:kotest-extensions-spring:1.1.1'
     testImplementation 'io.kotest:kotest-assertions-core-jvm:5.0.3'
+
+    testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
 }
 
 dependencyManagement {
