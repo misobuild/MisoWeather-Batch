@@ -2,11 +2,13 @@ package com.misoweather.misoweatherservice.member.dto;
 
 import com.sun.istack.NotNull;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpRequestDto {
 
     @NotNull
@@ -28,4 +30,12 @@ public class SignUpRequestDto {
     @NotNull
     @Schema(example = "1241")
     private Long defaultRegionId;
+
+    SignUpRequestDto(String socialId, String socialType, String nickname, String emoji, Long defaultRegionId) {
+        this.socialId = socialId;
+        this.socialType = socialType;
+        this.nickname = nickname;
+        this.emoji = emoji;
+        this.defaultRegionId = defaultRegionId;
+    }
 }
