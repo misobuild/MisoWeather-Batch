@@ -1,5 +1,6 @@
 package com.misoweather.misoweatherservice.mapping.service;
 
+import com.misoweather.misoweatherservice.config.JpaAuditingConfiguration;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMappingRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(JpaAuditingConfiguration.class)
 @DisplayName("MappingSurveyService에서 비즈니스 로직 없는 JPA 활용 부분을 테스트한다.")
 public class MappingSurveyServiceJpaTest {
     @Autowired
@@ -121,6 +124,7 @@ public class MappingSurveyServiceJpaTest {
                 .shortBigScale("서울")
                 .build();
         entityManager.persist(givenMemberSurveyMapping);
+
         // when
         List<MemberSurveyMapping> actual = mappingSurveyService.getRecentSurveyListFor(1L)
                 .stream().sorted(Comparator.comparing(MemberSurveyMapping::getCreatedAt).reversed()).collect(Collectors.toList());
