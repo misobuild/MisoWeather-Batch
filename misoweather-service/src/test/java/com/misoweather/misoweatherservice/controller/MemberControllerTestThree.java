@@ -1,79 +1,65 @@
 package com.misoweather.misoweatherservice.controller;
 
-import com.misoweather.misoweatherservice.config.WithCustomMockUser;
-import com.misoweather.misoweatherservice.domain.member.Member;
+import com.misoweather.misoweatherservice.config.SecurityConfig;
+import com.misoweather.misoweatherservice.global.exception.ControllerExceptionHandler;
 import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
-import com.misoweather.misoweatherservice.member.auth.UserDetailsImpl;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.member.service.MemberService;
 import com.misoweather.misoweatherservice.member.service.SimpleMemberService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = MemberController.class)
+@WebMvcTest(controllers = MemberController.class,
+        excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
 @AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("MemberController 테스트")
-@Import(SecurityContextPersistenceFilter.class)
-public class MemberControllerTest {
+public class MemberControllerTestTwo {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private MemberController memberController;
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
     @MockBean
-    private AuthenticationManager authenticationManager;
-    @MockBean
     private MemberService memberService;
-    @MockBean
-    private UserDetailsImpl userDetailsImpl;
     @MockBean
     private SimpleMemberService simpleMemberService;
 
-    private Collection<? extends GrantedAuthority> authorities(String userRole){
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(userRole));
-        return authorities;
+
+    @BeforeAll
+    public void setUp() {
+        this.mockMvc = MockMvcBuilders
+                .standaloneSetup(memberController)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
-    @WithCustomMockUser
     @DisplayName("Mock User get Member 테스트")
     public void getMember() throws Exception {
         // given
-        Member givenMember = spy(Member.class);
         MemberInfoResponseDto memberInfoResponseDto = MemberInfoResponseDto.builder().build();
-        Authentication authentication = new UsernamePasswordAuthenticationToken("test", "test", authorities("USER"));
-        given(jwtTokenProvider.resolveToken(any())).willReturn("helloToken");
-        given(jwtTokenProvider.validateToken(any())).willReturn(Boolean.TRUE);
-        given(jwtTokenProvider.getAuthentication(anyString())).willReturn(authentication);
-        given(userDetailsImpl.getMember()).willReturn(givenMember);
         given(simpleMemberService.getMemberInfo(any())).willReturn(memberInfoResponseDto);
-
 
         // when
         ResultActions result = this.mockMvc.perform(
