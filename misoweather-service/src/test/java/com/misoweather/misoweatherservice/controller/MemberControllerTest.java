@@ -1,9 +1,13 @@
 package com.misoweather.misoweatherservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.misoweather.misoweatherservice.config.SecurityConfig;
+import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.global.exception.ControllerExceptionHandler;
 import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
+import com.misoweather.misoweatherservice.member.dto.SignUpRequestDto;
+import com.misoweather.misoweatherservice.member.dto.SingUpRequestDtoBuilder;
 import com.misoweather.misoweatherservice.member.service.MemberService;
 import com.misoweather.misoweatherservice.member.service.SimpleMemberService;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,15 +21,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = MemberController.class,
@@ -33,18 +40,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("MemberController 테스트")
-public class MemberControllerTestTwo {
-    @Autowired
+public class MemberControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private MemberController memberController;
+    @Autowired
+    private ObjectMapper objectMapper;
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
     @MockBean
     private MemberService memberService;
     @MockBean
     private SimpleMemberService simpleMemberService;
-
 
     @BeforeAll
     public void setUp() {
@@ -55,7 +62,7 @@ public class MemberControllerTestTwo {
     }
 
     @Test
-    @DisplayName("Mock User get Member 테스트")
+    @DisplayName("getMember() 테스트")
     public void getMember() throws Exception {
         // given
         MemberInfoResponseDto memberInfoResponseDto = MemberInfoResponseDto.builder().build();
@@ -64,12 +71,38 @@ public class MemberControllerTestTwo {
         // when
         ResultActions result = this.mockMvc.perform(
                 get("/api/member")
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("registerUser 테스트")
+    public void registerUser() throws Exception {
+        // given
+        SignUpRequestDto signUpRequestDto = SingUpRequestDtoBuilder
+                .build("test", "testType", "hello", ":)", 999L);
+
+        Member givenMember = spy(Member.class);
+        doReturn(9999L).when(givenMember).getMemberId();
+        doReturn(signUpRequestDto.getSocialId()).when(givenMember).getSocialId();
+        doReturn(signUpRequestDto.getSocialType()).when(givenMember).getSocialType();
+
+        given(simpleMemberService.registerMember(any(SignUpRequestDto.class), anyString())).willReturn(givenMember);
+        given(jwtTokenProvider.createToken(anyString(), anyString(), anyString())).willReturn("testServerToken");
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                post("/api/member")
+                        .content(objectMapper.writeValueAsString(signUpRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("socialToken", "testToken")
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(header().string("serverToken", "testServerToken"));
     }
 }
