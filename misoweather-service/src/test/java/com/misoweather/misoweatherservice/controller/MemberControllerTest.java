@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -31,8 +33,7 @@ import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = MemberController.class,
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
@@ -126,5 +127,28 @@ public class MemberControllerTest {
                 .andExpect(header().string("serverToken", "testServerToken"))
                 .andDo(print());
 
+    }
+
+    @Test
+    @DisplayName("성공: buildNickName 사용 가능 닉네임 조회하기 테스트")
+    public void buildNickname() throws Exception{
+        // given
+        NicknameResponseDto nicknameResponseDto = NicknameResponseDto.builder()
+                .nickname("testNickname")
+                .emoji(":)")
+                .build();
+
+        given(memberService.buildNickname()).willReturn(nicknameResponseDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/member/nickname")
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.nickname").value(equalTo("testNickname")))
+                .andExpect(jsonPath("$.data.emoji").value(equalTo(":)")))
+                .andDo(print());
     }
 }
