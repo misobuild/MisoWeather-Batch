@@ -5,9 +5,7 @@ import com.misoweather.misoweatherservice.config.SecurityConfig;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.global.exception.ControllerExceptionHandler;
 import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
-import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
-import com.misoweather.misoweatherservice.member.dto.SignUpRequestDto;
-import com.misoweather.misoweatherservice.member.dto.SingUpRequestDtoBuilder;
+import com.misoweather.misoweatherservice.member.dto.*;
 import com.misoweather.misoweatherservice.member.service.MemberService;
 import com.misoweather.misoweatherservice.member.service.SimpleMemberService;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,6 +30,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -104,5 +103,28 @@ public class MemberControllerTest {
         result
                 .andExpect(status().isOk())
                 .andExpect(header().string("serverToken", "testServerToken"));
+    }
+
+    @Test
+    @DisplayName("성공: reissue() 테스트")
+    public void reissue() throws Exception{
+        // given
+        LoginRequestDto loginRequestDto = LoginRequestDtoBuilder.build("testSocialId", "testSocialType");
+        String socialToken = "testSocialToken";
+        given(simpleMemberService.reissue(any(LoginRequestDto.class), anyString())).willReturn("testServerToken");
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                post("/api/member/token")
+                        .content(objectMapper.writeValueAsString(loginRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("socialToken", socialToken)
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(header().string("serverToken", "testServerToken"))
+                .andDo(print());
+
     }
 }
