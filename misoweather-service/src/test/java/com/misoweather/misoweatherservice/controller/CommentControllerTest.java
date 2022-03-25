@@ -109,4 +109,23 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.data.commentList[0].content").value(equalTo("안녕하세요")))
                 .andDo(print());
     }
+
+
+    @Test
+    @DisplayName("성공: getCommentList() 코멘트 조회 - commentId 없는 경우")
+    public void getCommentListWhenCommentIdSizeNull() throws Exception{
+        // given
+        CommentListResponseDto givenCommentListResponseDto = CommentListResponseDto.builder().commentList(List.of()).build();
+        given(simpleCommentService.getCommentList(any(), any())).willReturn(givenCommentListResponseDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/comment")
+                        .param("size", String.valueOf(0))
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }
