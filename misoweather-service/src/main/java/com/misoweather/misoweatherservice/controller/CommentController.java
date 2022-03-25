@@ -38,7 +38,7 @@ public class CommentController {
     @GetMapping("/api/comment")
     public ResponseEntity<ApiResponseWithData<CommentListResponseDto>>
     getCommentList(@RequestParam(required = false) Long commentId, @RequestParam Integer size) {
-        if (size == null) size = DEFAULT_SIZE;
+        if (size == 0) size = DEFAULT_SIZE;
         return ResponseEntity.ok(ApiResponseWithData.<CommentListResponseDto>builder()
                 .status(HttpStatusEnum.OK)
                 .data(simpleCommentService.getCommentList(commentId, PageRequest.of(0, size)))
