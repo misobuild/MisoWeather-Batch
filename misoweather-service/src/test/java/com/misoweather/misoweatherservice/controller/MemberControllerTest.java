@@ -24,14 +24,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -126,7 +125,6 @@ public class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string("serverToken", "testServerToken"))
                 .andDo(print());
-
     }
 
     @Test
@@ -149,6 +147,28 @@ public class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.nickname").value(equalTo("testNickname")))
                 .andExpect(jsonPath("$.data.emoji").value(equalTo(":)")))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("성공: delete() 회원 삭제 테스트")
+    public void deleteMember() throws Exception{
+        // given
+        DeleteMemberRequestDto deleteMemberRequestDto = DeleteMemberRequestDtoBuilder.build("testSocialId", "testSocialType");
+        willDoNothing().given(simpleMemberService).deleteMember(deleteMemberRequestDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                delete("/api/member")
+                        .content(objectMapper.writeValueAsString(deleteMemberRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print());
+
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value(equalTo("Deletion Successful")))
                 .andDo(print());
     }
 }
