@@ -84,7 +84,7 @@ public class MemberController {
         simpleMemberService.deleteMember(deleteMemberRequestDto);
 
         return ResponseEntity.ok()
-                .body(new ApiResponse(HttpStatusEnum.OK, "Deletetion Successful"));
+                .body(new ApiResponse(HttpStatusEnum.OK, "Deletion Successful"));
     }
 
     @ApiOperation(value="회원 가입 여부")
