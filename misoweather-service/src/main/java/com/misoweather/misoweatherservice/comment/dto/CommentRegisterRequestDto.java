@@ -6,10 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class CommentRegisterRequestDto {
     @NotNull
     private String content;
+
+    CommentRegisterRequestDto(String content) {
+        this.content = content;
+    }
 }
 
