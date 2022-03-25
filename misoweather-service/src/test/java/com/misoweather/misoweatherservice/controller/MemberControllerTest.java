@@ -146,8 +146,7 @@ public class MemberControllerTest {
         result
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.nickname").value(equalTo("testNickname")))
-                .andExpect(jsonPath("$.data.emoji").value(equalTo(":)")))
-                .andDo(print());
+                .andExpect(jsonPath("$.data.emoji").value(equalTo(":)")));
     }
 
     @Test
@@ -162,13 +161,32 @@ public class MemberControllerTest {
                 delete("/api/member")
                         .content(objectMapper.writeValueAsString(deleteMemberRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print());
+                        .accept(MediaType.APPLICATION_JSON));
 
         // then
         result
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value(equalTo("Deletion Successful")))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(equalTo("Deletion Successful")));
+    }
+
+    @Test
+    @DisplayName("성공: checkExistence() 회원 가입 여부 확인")
+    public void checkExistence() throws Exception{
+        // given
+        String givenSocialId = "testSocialId";
+        String givenSocialType = "testSocialType";
+        given(memberService.ifMemberExistDelete(givenSocialId, givenSocialType)).willReturn(Boolean.TRUE);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/member/existence")
+                        .param("socialId", givenSocialId)
+                        .param("socialType", givenSocialType)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(equalTo(Boolean.TRUE)));
     }
 }
