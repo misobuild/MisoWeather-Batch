@@ -171,7 +171,7 @@ public class MemberControllerTest {
 
     @Test
     @DisplayName("성공: checkExistence() 회원 가입 여부 확인")
-    public void checkExistence() throws Exception{
+    public void checkExistence() throws Exception {
         // given
         String givenSocialId = "testSocialId";
         String givenSocialType = "testSocialType";
@@ -188,5 +188,18 @@ public class MemberControllerTest {
         result
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value(equalTo(Boolean.TRUE)));
+    }
+
+    @Test
+    @DisplayName("성공: status() is 200")
+    public void healthCheck() throws Exception{
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/health_check")
+                        .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        result
+                .andExpect(status().isOk());
     }
 }
