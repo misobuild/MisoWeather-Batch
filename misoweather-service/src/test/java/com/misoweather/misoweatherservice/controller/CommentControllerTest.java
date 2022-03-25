@@ -87,4 +87,26 @@ public class CommentControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("성공: getCommentList() 코멘트 조회 - commentId 있는 경우")
+    public void getCommentList() throws Exception{
+        // given
+        Comment givenComment = Comment.builder().content("안녕하세요").build();
+        CommentListResponseDto givenCommentListResponseDto = CommentListResponseDto.builder()
+                .commentList(List.of(givenComment))
+                .build();
+        given(simpleCommentService.getCommentList(any(), any())).willReturn(givenCommentListResponseDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/comment")
+                        .param("commentId", String.valueOf(99L))
+                        .param("size", String.valueOf(1))
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.commentList[0].content").value(equalTo("안녕하세요")))
+                .andDo(print());
+    }
 }
