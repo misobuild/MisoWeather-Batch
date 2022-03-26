@@ -29,6 +29,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -67,13 +68,13 @@ public class RegionControllerTest {
     @DisplayName("성공: getMidScaleList()")
     public void getMidScaleList() throws Exception{
         // given
-        Region region = RegionBuilder.build(99999L, "경기도", "고양시덕양구", "행신1동");
-        RegionResponseDto givenRegionresponseDto = RegionResponseDto.builder().midScaleList(List.of(region)).build();
-        given(regionService.getMidScaleList(any())).willReturn(givenRegionresponseDto);
+        Region givenRegion = RegionBuilder.build(99999L, "경기도", "고양시덕양구", "행신1동");
+        RegionResponseDto givenRegionresponseDto = RegionResponseDto.builder().midScaleList(List.of(givenRegion)).build();
+        given(regionService.getMidScaleList(anyString())).willReturn(givenRegionresponseDto);
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/region/{bigScaleRegion}", "hello")
+                get("/api/region/{bigScaleRegion}", "경기도")
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result
@@ -83,4 +84,28 @@ public class RegionControllerTest {
                 .andExpect(jsonPath("$.data.regionList[0].smallScale").value(equalTo("행신1동")))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("성공: getSmallScaleList() 테스트")
+    public void getSmallScaleList() throws Exception{
+        // given
+        Region givenRegion = RegionBuilder.build(99999L, "경기도", "고양시덕양구", "행신1동");
+        RegionResponseDto givenRegionresponseDto = RegionResponseDto.builder().midScaleList(List.of(givenRegion)).build();
+        given(regionService.getSmallScaleList(anyString(), anyString())).willReturn(givenRegionresponseDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/region/{bigScaleRegion}/{midScaleRegion}", givenRegion.getBigScale(), givenRegion.getMidScale())
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value(equalTo("bigScale과 midScale로 찾아온 smallScale 리스트")))
+                .andExpect(jsonPath("$.data.regionList[0].bigScale").value(equalTo("경기도")))
+                .andExpect(jsonPath("$.data.regionList[0].midScale").value(equalTo("고양시덕양구")))
+                .andExpect(jsonPath("$.data.regionList[0].smallScale").value(equalTo("행신1동")))
+                .andDo(print());
+    }
+
+
 }
