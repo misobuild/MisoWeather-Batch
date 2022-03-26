@@ -54,7 +54,7 @@ public class RegionController {
     @ApiOperation(value = "사용자 지역 정보 변경", notes = "사용자의 기본 지역을 바꿉니다")
     @PutMapping("/api/member-region-mapping/default")
     @ApiImplicitParam(name = "regionId", value = "지역 아이디", example = "15")
-    public ResponseEntity<ApiResponseWithData<Long>> checkVersion(@AuthenticationPrincipal UserDetailsImpl userDetails, Long regionId) {
+    public ResponseEntity<ApiResponseWithData<Long>> updateMemberRegion(@AuthenticationPrincipal UserDetailsImpl userDetails, Long regionId) {
         return ResponseEntity.ok(ApiResponseWithData.<Long>builder()
                 .status(HttpStatusEnum.OK)
                 .data(simpleRegionService.updateRegion(userDetails.getMember(), regionId).getRegion().getId())
