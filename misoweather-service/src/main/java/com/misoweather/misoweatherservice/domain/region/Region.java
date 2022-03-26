@@ -53,4 +53,11 @@ public class Region {
         this.lastWeatherUpdate = modifiedDateTime;
         return this;
     }
+
+    Region(Long id, String bigScale, String midScale, String smallScale) {
+        this.id = id;
+        this.bigScale = bigScale;
+        this.midScale = midScale;
+        this.smallScale = smallScale;
+    }
 }
