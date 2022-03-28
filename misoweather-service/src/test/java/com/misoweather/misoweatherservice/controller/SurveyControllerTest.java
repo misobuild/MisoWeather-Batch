@@ -1,18 +1,14 @@
 package com.misoweather.misoweatherservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.misoweather.misoweatherservice.comment.dto.CommentListResponseDto;
 import com.misoweather.misoweatherservice.config.SecurityConfig;
-import com.misoweather.misoweatherservice.domain.comment.Comment;
 import com.misoweather.misoweatherservice.domain.member.Member;
-import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
+import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.global.api.ListDto;
 import com.misoweather.misoweatherservice.global.exception.ControllerExceptionHandler;
 import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.member.auth.UserDetailsImpl;
-import com.misoweather.misoweatherservice.region.service.RegionService;
-import com.misoweather.misoweatherservice.region.service.SimpleRegionService;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.service.SimpleSurveyService;
 import com.misoweather.misoweatherservice.survey.service.SurveyService;
@@ -20,7 +16,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,8 +31,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -75,7 +72,7 @@ public class SurveyControllerTest {
     }
 
     @Test
-    @DisplayName("성공: getCommentList() 코멘트 조회 - commentId 있는 경우")
+    @DisplayName("성공: getSurveyStatus() 사용자의 서베이 답변 상태 가져오기")
     public void getSurveyStatus() throws Exception{
         // given
         Member givenMember = Member.builder().build();
@@ -93,6 +90,26 @@ public class SurveyControllerTest {
         result
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.responseList[0].answered").value(equalTo(Boolean.TRUE)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("성공: getAnswer() 서베이 답변 목록 가져오기")
+    public void getAnswer() throws Exception{
+        // given
+        AnswerStatusDto givenAnswerStatusDto = AnswerStatusDto.builder().surveyId(99999L).build();
+        ListDto givenListDto = ListDto.builder().responseList(List.of(givenAnswerStatusDto)).build();
+
+        given(surveyService.getAnswerList(anyLong())).willReturn(givenListDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/survey/answers/{surveyId}", 99999L)
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.responseList[0].surveyId").value(equalTo(99999)))
                 .andDo(print());
     }
 }
