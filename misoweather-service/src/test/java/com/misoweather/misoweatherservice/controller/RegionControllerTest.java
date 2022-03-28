@@ -50,8 +50,6 @@ public class RegionControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private RegionController regionController;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockBean
     private RegionService regionService;
     @MockBean
