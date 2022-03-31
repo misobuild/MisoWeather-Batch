@@ -64,7 +64,7 @@ public class SurveyController {
     @ApiOperation(value = "서베이 결과")
     @GetMapping("/api/survey")
     public ResponseEntity<ApiResponseWithData<ListDto<SurveyReader>>>
-    getSurveryResult(@RequestParam(required = false) String shortBigScale) {
+    getSurveyResult(@RequestParam(required = false) String shortBigScale) {
         return ResponseEntity.ok(ApiResponseWithData.<ListDto<SurveyReader>>builder()
                 .status(HttpStatusEnum.OK)
                 .data(simpleSurveyService.getSurveyResultList(shortBigScale))
