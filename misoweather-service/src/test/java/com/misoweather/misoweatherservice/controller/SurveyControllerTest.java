@@ -10,6 +10,9 @@ import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.member.auth.UserDetailsImpl;
 import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
+import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDto;
+import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDtoBuilder;
+import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyResponseDto;
 import com.misoweather.misoweatherservice.survey.service.SimpleSurveyService;
 import com.misoweather.misoweatherservice.survey.service.SurveyService;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,6 +39,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -110,6 +114,29 @@ public class SurveyControllerTest {
         result
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.responseList[0].surveyId").value(equalTo(99999)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("성공: registerComment() 서베이 답변 입력")
+    public void registerComment() throws Exception{
+        // given
+        Member givenMember = spy(Member.class);
+        AnswerSurveyDto givenAnswerSurveyDto = AnswerSurveyDtoBuilder.build(99999L, 1111L, "경기");
+        AnswerSurveyResponseDto givenAnswerSurveyResponseDto = AnswerSurveyResponseDto.builder().surveyDescription("Test Description").build();
+        given(userDetails.getMember()).willReturn(givenMember);
+        given(simpleSurveyService.answerSurvey(any(), any(AnswerSurveyDto.class))).willReturn(givenAnswerSurveyResponseDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                post("/api/survey")
+                        .content(objectMapper.writeValueAsString(givenAnswerSurveyDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.surveyDescription").value("Test Description"))
                 .andDo(print());
     }
 }
