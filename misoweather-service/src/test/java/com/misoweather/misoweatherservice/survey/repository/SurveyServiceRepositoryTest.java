@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @Import(JpaAuditingConfiguration.class)
 @DisplayName("SurveyService에서 비즈니스 로직 없는 JPA 활용 부분을 테스트한다. 테스트")
 public class SurveyServiceRepositoryTest {
-    private SurveyService mappingSurveyService;
+    private SurveyService surveyService;
     @Autowired
     private SurveyRepository surveyRepository;
     @Autowired
@@ -39,11 +39,11 @@ public class SurveyServiceRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        this.mappingSurveyService = new SurveyService(surveyRepository, answerRepository);
+        this.surveyService = new SurveyService(surveyRepository, answerRepository);
     }
 
     @Test
-    @DisplayName("성공: <AnswerSurveyDto>")
+    @DisplayName("성공: <AnswerSurveyDto>의 answer.id를 통해 <Answer>를 찾아 반환한다.")
     void getAnswer(){
         // given
         Answer givenAnswer = entityManager.find(Answer.class, 1L);
@@ -51,8 +51,7 @@ public class SurveyServiceRepositoryTest {
         doReturn(givenAnswer.getId()).when(givenAnswerSurveyDto).getAnswerId();
 
         // when
-        Answer actual = answerRepository.findById(1L)
-                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+        Answer actual = surveyService.getAnswer(givenAnswerSurveyDto);
 
         // then
         assertThat(actual.getId(), is(givenAnswer.getId()));
