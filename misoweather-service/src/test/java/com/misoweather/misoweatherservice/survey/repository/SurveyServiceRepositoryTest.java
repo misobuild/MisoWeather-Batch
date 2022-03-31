@@ -4,6 +4,7 @@ import com.misoweather.misoweatherservice.config.JpaAuditingConfiguration;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.AnswerRepository;
+import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.domain.survey.SurveyRepository;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
@@ -56,7 +57,7 @@ public class SurveyServiceRepositoryTest {
         // then
         assertThat(actual.getId(), is(givenAnswer.getId()));
     }
-    
+
     @Test
     @DisplayName("실패: <AnswerSurveyDto>의 answer.id에 해당하는 <Answer> 존재하지 않아 NOT_FOUND 반환한다.")
     void getAnswerFail(){
@@ -68,5 +69,20 @@ public class SurveyServiceRepositoryTest {
         assertThatThrownBy(() -> surveyService.getAnswer(givenAnswerSurveyDto))
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("성공: <AnswerSurveyDto>의 survey.id를 통해 <Survey>를 찾아 반환한다.")
+    void getSurvey(){
+        // given
+        Survey givenSurvey = entityManager.find(Survey.class, 1L);
+        AnswerSurveyDto givenAnswerSurveyDto = spy(AnswerSurveyDto.class);
+        doReturn(givenSurvey.getId()).when(givenAnswerSurveyDto).getSurveyId();
+
+        // when
+        Survey actual = surveyService.getSurvey(givenAnswerSurveyDto);
+
+        // then
+        assertThat(actual.getId(), is(givenSurvey.getId()));
     }
 }
