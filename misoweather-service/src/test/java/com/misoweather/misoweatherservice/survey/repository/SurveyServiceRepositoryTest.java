@@ -1,8 +1,13 @@
 package com.misoweather.misoweatherservice.survey.repository;
 
 import com.misoweather.misoweatherservice.config.JpaAuditingConfiguration;
+import com.misoweather.misoweatherservice.domain.member.Member;
+import com.misoweather.misoweatherservice.domain.survey.Answer;
 import com.misoweather.misoweatherservice.domain.survey.AnswerRepository;
 import com.misoweather.misoweatherservice.domain.survey.SurveyRepository;
+import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
+import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
+import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDto;
 import com.misoweather.misoweatherservice.survey.service.SurveyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,11 +18,18 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(JpaAuditingConfiguration.class)
 @DisplayName("SurveyService에서 비즈니스 로직 없는 JPA 활용 부분을 테스트한다. 테스트")
 public class SurveyServiceRepositoryTest {
+    private SurveyService mappingSurveyService;
     @Autowired
     private SurveyRepository surveyRepository;
     @Autowired
@@ -25,16 +37,24 @@ public class SurveyServiceRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    private SurveyService mappingSurveyService;
-
     @BeforeEach
     void setUp() {
         this.mappingSurveyService = new SurveyService(surveyRepository, answerRepository);
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("성공: <AnswerSurveyDto>")
     void getAnswer(){
+        // given
+        Answer givenAnswer = entityManager.find(Answer.class, 1L);
+        AnswerSurveyDto givenAnswerSurveyDto = spy(AnswerSurveyDto.class);
+        doReturn(givenAnswer.getId()).when(givenAnswerSurveyDto).getAnswerId();
 
+        // when
+        Answer actual = answerRepository.findById(1L)
+                .orElseThrow(() -> new ApiCustomException(HttpStatusEnum.NOT_FOUND));
+
+        // then
+        assertThat(actual.getId(), is(givenAnswer.getId()));
     }
 }
