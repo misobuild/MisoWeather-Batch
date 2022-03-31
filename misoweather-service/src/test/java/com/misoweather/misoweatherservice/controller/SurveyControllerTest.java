@@ -158,4 +158,23 @@ public class SurveyControllerTest {
                 .andExpect(jsonPath("$.data.responseList[0].surveyTitle").value("Test Survey Title"))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("성공: checkSurveyByMember() 서베이 답변 여부가 Boolean.TRUE여야 한다.")
+    public void checkSurveyByMember() throws Exception{
+        // given
+        Member givenMember = spy(Member.class);
+        given(userDetails.getMember()).willReturn(givenMember);
+        given(mappingSurveyService.ifAnswerExist(any())).willReturn(Boolean.TRUE);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/survey/precheck")
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(Boolean.TRUE))
+                .andDo(print());
+    }
 }
