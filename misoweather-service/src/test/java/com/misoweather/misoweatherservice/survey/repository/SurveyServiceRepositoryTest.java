@@ -56,4 +56,17 @@ public class SurveyServiceRepositoryTest {
         // then
         assertThat(actual.getId(), is(givenAnswer.getId()));
     }
+    
+    @Test
+    @DisplayName("실패: <AnswerSurveyDto>의 answer.id에 해당하는 <Answer> 존재하지 않아 NOT_FOUND 반환한다.")
+    void getAnswerFail(){
+        // given
+        AnswerSurveyDto givenAnswerSurveyDto = spy(AnswerSurveyDto.class);
+        doReturn(9999L).when(givenAnswerSurveyDto).getAnswerId();
+
+        // when, then
+        assertThatThrownBy(() -> surveyService.getAnswer(givenAnswerSurveyDto))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
+    }
 }
