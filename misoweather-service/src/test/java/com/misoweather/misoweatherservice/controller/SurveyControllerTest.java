@@ -3,9 +3,9 @@ package com.misoweather.misoweatherservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.misoweather.misoweatherservice.config.SecurityConfig;
 import com.misoweather.misoweatherservice.domain.member.Member;
-import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.global.api.ListDto;
 import com.misoweather.misoweatherservice.global.exception.ControllerExceptionHandler;
+import com.misoweather.misoweatherservice.mapping.reader.SurveyReader;
 import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.member.auth.UserDetailsImpl;
@@ -33,11 +33,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -137,6 +135,27 @@ public class SurveyControllerTest {
         result
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.surveyDescription").value("Test Description"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("성공: getSurveyResult() 서베이 결과")
+    public void getSurveyResult() throws Exception{
+        // given
+        SurveyReader givenSurveyReader = SurveyReader.builder().surveyId(9999L).surveyTitle("Test Survey Title").build();
+        ListDto<SurveyReader> givenListDto = ListDto.<SurveyReader>builder().responseList(List.of(givenSurveyReader)).build();
+        given(simpleSurveyService.getSurveyResultList(anyString())).willReturn(givenListDto);
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/survey")
+                        .param("shortBigScale", "경기")
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.responseList[0].surveyId").value(9999L))
+                .andExpect(jsonPath("$.data.responseList[0].surveyTitle").value("Test Survey Title"))
                 .andDo(print());
     }
 }
