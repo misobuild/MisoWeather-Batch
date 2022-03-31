@@ -6,6 +6,7 @@ import com.misoweather.misoweatherservice.domain.survey.SurveyRepository;
 import com.misoweather.misoweatherservice.global.api.ListDto;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
+import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyJoinDto;
 import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyJoinDtoBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,14 +20,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static reactor.core.publisher.Mono.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentService 테스트")
@@ -83,5 +82,19 @@ public class SurveyServiceTest {
 
         // then
         assertThat(actual.get(0), is(9999L));
+    }
+
+
+    @Test
+    @DisplayName("성공: 답변하지 않은 List<Long>) 리스트에 대해 null로 찬 List<AnserStatusDto> 만들어 리턴한다.")
+    void buildAnswerStatusNullDtoList(){
+        // given
+        List<Long> givenSurveyIdList = List.of(99999L);
+
+        // when
+        List<AnswerStatusDto> actual = surveyService.buildAnswerStatusNullDtoList(givenSurveyIdList);
+
+        // then
+        assertThat(actual.get(0).getSurveyId(), is(99999L));
     }
 }
