@@ -69,4 +69,19 @@ public class SurveyServiceTest {
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
     }
+
+    @Test
+    @DisplayName("성공: getAllSurveyId() 모든 서베이를 찾아서 리스트로 반환한다")
+    void getAllSurveyId(){
+        // given
+        Survey givenSurvey = spy(Survey.class);
+        doReturn(9999L).when(givenSurvey).getId();
+        given(surveyRepository.findAll()).willReturn(List.of(givenSurvey));
+
+        // when
+        List<Long> actual = surveyService.getAllSurveyId();
+
+        // then
+        assertThat(actual.get(0), is(9999L));
+    }
 }
