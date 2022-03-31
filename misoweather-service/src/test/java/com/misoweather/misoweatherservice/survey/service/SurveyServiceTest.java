@@ -97,4 +97,18 @@ public class SurveyServiceTest {
         // then
         assertThat(actual.get(0).getSurveyId(), is(99999L));
     }
+
+
+    @Test
+    @DisplayName("List<AnswerStatusDto>를 ListDto<AnswerStatusDto>로 변환하여 리턴한다.")
+    void buildAnswerStatusResponseDtoList(){
+        // given
+        List<AnswerStatusDto> givenAnswerStatusDtoList = List.of(AnswerStatusDto.builder().surveyId(99999L).build());
+
+        // when
+        ListDto<AnswerStatusDto> actual = surveyService.buildAnswerStatusResponseDtoList(givenAnswerStatusDtoList);
+
+        // then
+        assertThat(actual.getResponseList().get(0).getSurveyId(), is(99999L));
+    }
 }
