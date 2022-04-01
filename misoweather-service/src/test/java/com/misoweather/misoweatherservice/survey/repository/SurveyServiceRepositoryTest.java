@@ -98,4 +98,17 @@ public class SurveyServiceRepositoryTest {
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
     }
+
+    @Test
+    @DisplayName("")
+    void checkAnswerAndSurveyFail(){
+        // given
+        Answer givenAnswer = entityManager.find(Answer.class, 1L);
+        Survey givenSurvey = entityManager.find(Survey.class, 4L);
+
+        // when, then
+        assertThatThrownBy(() -> surveyService.checkAnswerAndSurvey(givenAnswer, givenSurvey))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.CONFLICT.getMessage());
+    }
 }
