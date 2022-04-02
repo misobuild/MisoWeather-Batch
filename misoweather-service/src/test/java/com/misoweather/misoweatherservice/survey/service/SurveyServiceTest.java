@@ -1,5 +1,6 @@
 package com.misoweather.misoweatherservice.survey.service;
 
+import com.misoweather.misoweatherservice.domain.member_survey_mapping.MemberSurveyMapping;
 import com.misoweather.misoweatherservice.domain.survey.AnswerRepository;
 import com.misoweather.misoweatherservice.domain.survey.Survey;
 import com.misoweather.misoweatherservice.domain.survey.SurveyRepository;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
@@ -100,7 +102,7 @@ public class SurveyServiceTest {
 
 
     @Test
-    @DisplayName("List<AnswerStatusDto>를 ListDto<AnswerStatusDto>로 변환하여 리턴한다.")
+    @DisplayName("성공: List<AnswerStatusDto>를 ListDto<AnswerStatusDto>로 변환하여 리턴한다.")
     void buildAnswerStatusResponseDtoList(){
         // given
         List<AnswerStatusDto> givenAnswerStatusDtoList = List.of(AnswerStatusDto.builder().surveyId(99999L).build());
@@ -110,5 +112,16 @@ public class SurveyServiceTest {
 
         // then
         assertThat(actual.getResponseList().get(0).getSurveyId(), is(99999L));
+    }
+
+    @Test
+    @DisplayName("성공: <MemberSurveyMapping> 리스트가 비어있지 않다면 에러를 반환하지 않는다.")
+    void checkMemberSurveyMappingListVoid(){
+        // given
+//        MemberSurveyMapping givenMemberSurveyMapping = MemberSurveyMapping.builder().shortBigScale("서울").build();
+        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of();
+
+        // when, then
+        assertDoesNotThrow(() -> surveyService.checkMemberSurveyMappingList(givenMemberSurveyMappingList));
     }
 }
