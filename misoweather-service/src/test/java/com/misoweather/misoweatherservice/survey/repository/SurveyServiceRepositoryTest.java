@@ -20,10 +20,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -100,7 +100,7 @@ public class SurveyServiceRepositoryTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("실패: <Answer>의 소속 서베이와 주어진 <Survey>의 아이디가 다르면 에러 발생한다.")
     void checkAnswerAndSurveyFail(){
         // given
         Answer givenAnswer = entityManager.find(Answer.class, 1L);
@@ -110,5 +110,16 @@ public class SurveyServiceRepositoryTest {
         assertThatThrownBy(() -> surveyService.checkAnswerAndSurvey(givenAnswer, givenSurvey))
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.CONFLICT.getMessage());
+    }
+
+    @Test
+    @DisplayName("분기 테스트: <Answer>의 소속 서베이와 주어진 <Survey>의 아이디가 같으면 아무일도 일어나지 않는다.")
+    void checkAnswerAndSurveyVoid(){
+        // given
+        Answer givenAnswer = entityManager.find(Answer.class, 1L);
+        Survey givenSurvey = entityManager.find(Survey.class, 1L);
+
+        // when, then
+        assertDoesNotThrow(() -> surveyService.checkAnswerAndSurvey(givenAnswer, givenSurvey));
     }
 }
