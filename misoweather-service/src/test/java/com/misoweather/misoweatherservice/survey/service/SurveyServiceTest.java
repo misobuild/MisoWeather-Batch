@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
@@ -123,5 +124,55 @@ public class SurveyServiceTest {
 
         // when, then
         assertDoesNotThrow(() -> surveyService.checkMemberSurveyMappingList(givenMemberSurveyMappingList));
+    }
+
+    @Test
+    @DisplayName("실패: <MemberSurveyMapping> 리스트가 비어있으면 에러를 반환한다.")
+    void checkMemberSurveyMappingListFail(){
+        // given
+        MemberSurveyMapping givenMemberSurveyMapping = MemberSurveyMapping.builder().shortBigScale("서울").build();
+        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of(givenMemberSurveyMapping);
+
+        // when, then
+        assertThatThrownBy(() -> surveyService.checkMemberSurveyMappingList(givenMemberSurveyMappingList))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.CONFLICT.getMessage());
+    }
+
+    @Test
+    @DisplayName("")
+    void buildMemberSurveyMapping(){
+        // given
+        // when
+        // then
+    }
+    @Test
+    @DisplayName("")
+    void buildAnswerSurveyResponseDto(){
+        // given
+        // when
+        // then
+    }
+    @Test
+    @DisplayName("")
+    void getSurveyMatchesBigScaleList(){
+        // given
+
+        // when
+        // then
+    }
+    @Test
+    @DisplayName("")
+    void getSurveyReaderMatchesIdList(){
+        // given
+        // when
+        // then
+    }
+    @Test
+    @DisplayName("")
+    void setSurveyReaderList(){
+        // given
+        // when
+        // then
     }
 }
