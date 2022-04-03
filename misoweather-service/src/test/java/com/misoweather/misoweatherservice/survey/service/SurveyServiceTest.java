@@ -9,6 +9,7 @@ import com.misoweather.misoweatherservice.domain.survey.SurveyRepository;
 import com.misoweather.misoweatherservice.global.api.ListDto;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
+import com.misoweather.misoweatherservice.mapping.reader.SurveyReader;
 import com.misoweather.misoweatherservice.survey.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -201,11 +202,26 @@ public class SurveyServiceTest {
     }
 
     @Test
-    @DisplayName("<MemberSurvey>")
+    @DisplayName("성공: <MemberSurveyMapping> 리스트를 받아 전체 <Survey> 리스트와 일치하는 것으로 <SurveyReader> 리스트 만들어 반환한다.")
     void getSurveyReaderMatchesIdList(){
         // given
+        Survey givenSurvey = spy(Survey.class);
+        doReturn(9999L).when(givenSurvey).getId();
+        doReturn("Test Title").when(givenSurvey).getTitle();
+        doReturn("Test Description").when(givenSurvey).getDescription();
+
+        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of(MemberSurveyMapping.builder().survey(givenSurvey).build());
+        List<Survey> givenTotalSurveyList = List.of(givenSurvey);
+
+        given(surveyRepository.findAll()).willReturn(givenTotalSurveyList);
+
         // when
+        List<SurveyReader> actual = surveyService.getSurveyReaderMatchesIdList(givenMemberSurveyMappingList);
+
         // then
+        assertThat(actual.get(0).getSurveyId(), is(9999L));
+        assertThat(actual.get(0).getSurveyTitle(), is("Test Title"));
+        assertThat(actual.get(0).getSurveyDescription(), is("Test Description"));
     }
     @Test
     @DisplayName("")
