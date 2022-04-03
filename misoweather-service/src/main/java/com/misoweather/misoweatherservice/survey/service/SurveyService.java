@@ -92,10 +92,10 @@ public class SurveyService {
 
     public List<MemberSurveyMapping> getSurveyMatchesBigScaleList(List<MemberSurveyMapping> recentSurveyList, String shortBigScale){
         List<MemberSurveyMapping> recentIdMatchSurveyList = recentSurveyList;
-        if (shortBigScale != null) {
+
             recentIdMatchSurveyList = recentSurveyList.stream()
                     .filter(item -> item.getShortBigScale().equals(shortBigScale)).collect(Collectors.toList());
-        }
+
         return recentIdMatchSurveyList;
     }
 

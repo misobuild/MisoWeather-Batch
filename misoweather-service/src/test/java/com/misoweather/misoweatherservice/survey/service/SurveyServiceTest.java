@@ -173,20 +173,35 @@ public class SurveyServiceTest {
     }
 
     @Test
-    @DisplayName("<MemberSurveyMapping>리스트와 (String)shortBigScale 받아 shortBigScale과 일치하는 <MemberSurveyMapping> 리스트 반환한다.")
+    @DisplayName("<성공: MemberSurveyMapping>리스트와 (String)shortBigScale 받아 shortBigScale과 일치하는 <MemberSurveyMapping> 리스트 반환한다.")
     void getSurveyMatchesBigScaleList(){
         // given
-        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of(MemberSurveyMapping.builder().shortBigScale("서울").build());
+        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of(MemberSurveyMapping.builder().shortBigScale("경기").build());
         String givenShortBigScale = "서울";
 
         // when
         List<MemberSurveyMapping> actual = surveyService.getSurveyMatchesBigScaleList(givenMemberSurveyMappingList, givenShortBigScale);
 
         // then
-        assertThat(actual.get(0).getShortBigScale(), is(givenShortBigScale));
+        assertThat(actual, is(List.of()));
     }
+
     @Test
-    @DisplayName("")
+    @DisplayName("<분기 테스트: MemberSurveyMapping>리스트와 (String)shortBigScale이 null일 경우 <MemberSurveyMapping> 리스트를 그대로 반환한다.")
+    void getSurveyMatchesBigScaleListIfShortBigScaleNull(){
+        // given
+        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of(MemberSurveyMapping.builder().shortBigScale("서울").build());
+        String givenShortBigScale = null;
+
+        // when
+        List<MemberSurveyMapping> actual = surveyService.getSurveyMatchesBigScaleList(givenMemberSurveyMappingList, givenShortBigScale);
+
+        // then
+        assertThat(actual.get(0).getShortBigScale(), is("서울"));
+    }
+
+    @Test
+    @DisplayName("<MemberSurvey>")
     void getSurveyReaderMatchesIdList(){
         // given
         // when
