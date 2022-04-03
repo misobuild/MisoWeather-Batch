@@ -156,6 +156,7 @@ public class SurveyServiceTest {
         // then
         assertThat(actual.getShortBigScale(), is("경기"));
     }
+
     @Test
     @DisplayName("성공: <Answer>, <Survey> 받아 <AnswerSurveyMapping> 객체 만들어 반환한다.")
     void buildAnswerSurveyResponseDto(){
@@ -170,13 +171,19 @@ public class SurveyServiceTest {
         // then
         assertThat(actual.getSurveyDescription(), is("Test Survey Description"));
     }
+
     @Test
-    @DisplayName("")
+    @DisplayName("<MemberSurveyMapping>리스트와 (String)shortBigScale 받아 shortBigScale과 일치하는 <MemberSurveyMapping> 리스트 반환한다.")
     void getSurveyMatchesBigScaleList(){
         // given
+        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of(MemberSurveyMapping.builder().shortBigScale("서울").build());
+        String givenShortBigScale = "서울";
 
         // when
+        List<MemberSurveyMapping> actual = surveyService.getSurveyMatchesBigScaleList(givenMemberSurveyMappingList, givenShortBigScale);
+
         // then
+        assertThat(actual.get(0).getShortBigScale(), is(givenShortBigScale));
     }
     @Test
     @DisplayName("")
