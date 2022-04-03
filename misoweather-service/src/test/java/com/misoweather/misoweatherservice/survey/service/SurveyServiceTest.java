@@ -25,11 +25,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentService 테스트")
@@ -37,6 +35,7 @@ public class SurveyServiceTest {
 
     @Mock private SurveyRepository surveyRepository;
     @Mock private AnswerRepository answerRepository;
+    @Mock private SurveyReader  surveyReader;
     @InjectMocks private SurveyService surveyService;
 
     @BeforeEach
@@ -224,10 +223,18 @@ public class SurveyServiceTest {
         assertThat(actual.get(0).getSurveyDescription(), is("Test Description"));
     }
     @Test
-    @DisplayName("")
+    @DisplayName("성공: <SurveyReader> 리스트 받아 (ListDto)<SurveyDto> 만들어 반환한다.")
     void setSurveyReaderList(){
         // given
+        doNothing().when(surveyReader).setValues();
+        doNothing().when(surveyReader).setInfoMap();
+        given(surveyReader.getSurveyId()).willReturn(9999L);
+        List<SurveyReader> givenSurveyReaderList = List.of(surveyReader);
+
         // when
+        ListDto<SurveyReader> actual = surveyService.setSurveyReaderList(givenSurveyReaderList);
+
         // then
+        assertThat(actual.getResponseList().get(0).getSurveyId(), is((9999L)));
     }
 }
