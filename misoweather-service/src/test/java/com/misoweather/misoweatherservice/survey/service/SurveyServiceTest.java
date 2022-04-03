@@ -9,10 +9,7 @@ import com.misoweather.misoweatherservice.domain.survey.SurveyRepository;
 import com.misoweather.misoweatherservice.global.api.ListDto;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.survey.dto.AnswerStatusDto;
-import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyDto;
-import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyJoinDto;
-import com.misoweather.misoweatherservice.survey.dto.AnswerSurveyJoinDtoBuilder;
+import com.misoweather.misoweatherservice.survey.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -143,7 +140,7 @@ public class SurveyServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("성공: <Member>, <Answer>, <Survey>, <AnswerSurveyDto> 받아 <MemberSurveyMapping> 객체 만들어 반환한다.")
     void buildMemberSurveyMapping(){
         // given
         Member givenMember = spy(Member.class);
@@ -160,11 +157,18 @@ public class SurveyServiceTest {
         assertThat(actual.getShortBigScale(), is("경기"));
     }
     @Test
-    @DisplayName("")
+    @DisplayName("성공: <Answer>, <Survey> 받아 <AnswerSurveyMapping> 객체 만들어 반환한다.")
     void buildAnswerSurveyResponseDto(){
         // given
+        Answer givenAnswer = spy(Answer.class);
+        Survey givenSurvey = spy(Survey.class);
+        doReturn("Test Survey Description").when(givenSurvey).getDescription();
+
         // when
+        AnswerSurveyResponseDto actual = surveyService.buildAnswerSurveyResponseDto(givenAnswer, givenSurvey);
+
         // then
+        assertThat(actual.getSurveyDescription(), is("Test Survey Description"));
     }
     @Test
     @DisplayName("")
