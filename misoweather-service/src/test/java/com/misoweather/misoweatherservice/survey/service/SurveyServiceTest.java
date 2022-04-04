@@ -187,20 +187,6 @@ public class SurveyServiceTest {
     }
 
     @Test
-    @DisplayName("<분기 테스트: MemberSurveyMapping>리스트와 (String)shortBigScale이 null일 경우 <MemberSurveyMapping> 리스트를 그대로 반환한다.")
-    void getSurveyMatchesBigScaleListIfShortBigScaleNull(){
-        // given
-        List<MemberSurveyMapping> givenMemberSurveyMappingList = List.of(MemberSurveyMapping.builder().shortBigScale("서울").build());
-        String givenShortBigScale = null;
-
-        // when
-        List<MemberSurveyMapping> actual = surveyService.getSurveyMatchesBigScaleList(givenMemberSurveyMappingList, givenShortBigScale);
-
-        // then
-        assertThat(actual.get(0).getShortBigScale(), is("서울"));
-    }
-
-    @Test
     @DisplayName("성공: <MemberSurveyMapping> 리스트를 받아 전체 <Survey> 리스트와 일치하는 것으로 <SurveyReader> 리스트 만들어 반환한다.")
     void getSurveyReaderMatchesIdList(){
         // given
