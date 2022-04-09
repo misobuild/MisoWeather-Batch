@@ -137,4 +137,25 @@ public class MemberServiceTest {
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
     }
+
+
+    @Test
+    @DisplayName("buildMemberInfoResponse() 테스트")
+    void buildMemberInfoResponseTest(){
+        // given
+        Region spyRegion = spy(Region.class);
+        doReturn(9999L).when(spyRegion).getId();
+        doReturn("경기도").when(spyRegion).getBigScale();
+        Member givenMember = Member.builder().emoji("testEmoji").nickname("testNickname").build();
+        MemberRegionMapping givenMapping = MemberRegionMapping.builder().region(spyRegion).build();
+
+        // when
+        MemberInfoResponseDto actual = memberService.buildMemberInfoResponse(givenMember, givenMapping);
+
+        // then
+        assertThat(actual.getEmoji(), is("testEmoji"));
+        assertThat(actual.getNickname(), is("testNickname"));
+        assertThat(actual.getRegionId(), is(9999L));
+        assertThat(actual.getRegionName(), is("경기"));
+    }
 }
