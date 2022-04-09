@@ -57,4 +57,31 @@ public class MemberServiceTest {
     public void setUp() {
         this.memberService = new MemberService(memberRepository, adjectiveRepository, adverbRepository, emojiRepository, jwtTokenProvider, validatorFactory);
     }
+
+    @Test
+    @DisplayName("buildNickName() 테스트")
+    void buildNicknameTest(){
+        // given
+        Adjective givenAdjective = spy(Adjective.class);
+        doReturn("행복한").when(givenAdjective).getWord();
+        Adverb givenAdverb = spy(Adverb.class);
+        doReturn("빨간").when(givenAdverb).getWord();
+        Emoji givenEmoji = spy(Emoji.class);
+        doReturn("코뿔소").when(givenEmoji).getWord();
+        doReturn("testEmoji").when(givenEmoji).getEmoji();
+
+        given(adjectiveRepository.count()).willReturn(1L);
+        given(adverbRepository.count()).willReturn(1L);
+        given(emojiRepository.count()).willReturn(1L);
+        given(adjectiveRepository.findById(anyLong())).willReturn(Optional.ofNullable(givenAdjective));
+        given(adverbRepository.findById(anyLong())).willReturn(Optional.ofNullable(givenAdverb));
+        given(emojiRepository.findById(anyLong())).willReturn(Optional.ofNullable(givenEmoji));
+
+        // when
+        NicknameResponseDto actual = memberService.buildNickname();
+
+        // then
+        assertThat(actual.getNickname(), is("행복한 빨간코뿔소"));
+        assertThat(actual.getEmoji(), is("testEmoji"));
+    }
 }
