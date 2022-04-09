@@ -116,4 +116,25 @@ public class MemberServiceTest {
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
     }
+
+
+    @Test
+    @DisplayName("buildNickName() 테스트")
+    void buildNicknameTestFailThirdBranch(){
+        // given
+        Adjective givenAdjective = spy(Adjective.class);
+        Adverb givenAdverb = spy(Adverb.class);
+
+        given(adjectiveRepository.count()).willReturn(1L);
+        given(adverbRepository.count()).willReturn(1L);
+        given(emojiRepository.count()).willReturn(1L);
+        given(adjectiveRepository.findById(anyLong())).willReturn(Optional.ofNullable(givenAdjective));
+        given(adverbRepository.findById(anyLong())).willReturn(Optional.of(givenAdverb));
+        given(emojiRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when
+        assertThatThrownBy(() -> memberService.buildNickname())
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
+    }
 }
