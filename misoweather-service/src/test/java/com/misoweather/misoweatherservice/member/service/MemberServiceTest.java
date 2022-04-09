@@ -158,4 +158,20 @@ public class MemberServiceTest {
         assertThat(actual.getRegionId(), is(9999L));
         assertThat(actual.getRegionName(), is("경기"));
     }
+
+
+    @Test
+    @DisplayName("getRandomId() 테스트")
+    void getRandomIdTest(){
+        // given
+        Long givenNumber = 9999L;
+        boolean same = false;
+
+        // when
+        Long actual = memberService.getRandomId(givenNumber);
+        if(actual == givenNumber) same = true;
+
+        // then
+        assertThat(same, is(false));
+    }
 }
