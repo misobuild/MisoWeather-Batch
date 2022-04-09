@@ -174,4 +174,20 @@ public class MemberServiceTest {
         // then
         assertThat(same, is(false));
     }
+
+
+    // valida
+    @Test
+    @DisplayName("checkToken() throws BAD_REQUEST 테스트")
+    void checkTokenFail(){
+        // given
+        Validator givenValidator = spy(Validator.class);
+        doReturn(false).when(givenValidator).valid();
+        given(validatorFactory.of(any(), any(), any())).willReturn(givenValidator);
+
+        // when, then
+        assertThatThrownBy(() -> memberService.checkToken("testID", "kakao", "testNickname"))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.BAD_REQUEST.getMessage());
+    }
 }
