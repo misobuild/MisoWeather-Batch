@@ -84,4 +84,18 @@ public class MemberServiceTest {
         assertThat(actual.getNickname(), is("행복한 빨간코뿔소"));
         assertThat(actual.getEmoji(), is("testEmoji"));
     }
+
+
+    @Test
+    @DisplayName("buildNickName() 테스트")
+    void buildNicknameTestFailFirstBranch(){
+        // given
+        given(adjectiveRepository.count()).willReturn(1L);
+        given(adjectiveRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when
+        assertThatThrownBy(() -> memberService.buildNickname())
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
+    }
 }
