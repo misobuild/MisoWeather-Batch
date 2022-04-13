@@ -51,4 +51,28 @@ public class MemberServiceJpaTest {
     public void setUp() {
         this.memberService = new MemberService(memberRepository, adjectiveRepository, adverbRepository, emojiRepository, jwtTokenProvider, validatorFactory);
     }
+
+    @Test
+    @DisplayName("성공: <getMember>을 저장한다.")
+    void getMember() {
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+
+        // when
+        Member actual = memberService.getMember("99999", "kakao");
+
+        // then
+        assertThat(actual.getSocialId(), is("99999"));
+        assertThat(actual.getSocialType(), is("kakao"));
+        assertThatThrownBy(() -> memberService.getMember("testID", "kakao"))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
+    }
 }
