@@ -190,4 +190,16 @@ public class MemberServiceTest {
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.BAD_REQUEST.getMessage());
     }
+
+    @Test
+    @DisplayName("checkToken() doesNotThrow 테스트")
+    void checkToken(){
+        // given
+        Validator givenValidator = spy(Validator.class);
+        doReturn(true).when(givenValidator).valid();
+        given(validatorFactory.of(any(), any(), any())).willReturn(givenValidator);
+
+        // when, then
+        assertDoesNotThrow(() -> memberService.checkToken("testID", "kakao", "testNickname"));
+    }
 }
