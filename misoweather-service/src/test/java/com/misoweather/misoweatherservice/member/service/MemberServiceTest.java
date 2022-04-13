@@ -216,4 +216,18 @@ public class MemberServiceTest {
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.CONFLICT.getMessage());
     }
+
+    @Test
+    @DisplayName("checkExistence() 테스트")
+    void checkExistenceSecondException(){
+        //given
+        Member givenMember = Member.builder().build();
+        given(memberRepository.findBySocialIdAndSocialType(any(), any())).willReturn(Optional.empty());
+        given(memberRepository.findByNickname(any())).willReturn(Optional.of(givenMember));
+
+        // when, then
+        assertThatThrownBy(() -> memberService.checkExistence("testID", "kakao", "testNickname"))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.CONFLICT.getMessage());
+    }
 }
