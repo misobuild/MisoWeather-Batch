@@ -54,7 +54,7 @@ public class MemberServiceJpaTest {
 
     @Test
     @DisplayName("성공: <getMember>을 저장한다.")
-    void getMember() {
+    void getMemberTest() {
         // given
         Member givenMember = Member.builder()
                 .socialType("kakao")
@@ -74,5 +74,25 @@ public class MemberServiceJpaTest {
         assertThatThrownBy(() -> memberService.getMember("testID", "kakao"))
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("성공: <getMember>을 저장한다.")
+    void ifMemberExist() {
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+
+        // when
+        Boolean actual = memberService.ifMemberExistDelete("99999", "kakao");
+
+        // then
+        assertThat(actual, is(true));
     }
 }
