@@ -116,4 +116,22 @@ public class MemberServiceJpaTest {
         // then
         assertThat(memberRepository.findByNickname("test홍길동").isEmpty(), is(true));
     }
+
+
+    @Test
+    @DisplayName("성공: 어쩌구")
+    void buildMemberAndSaveTest(){
+        // given
+        SignUpRequestDto givenDto = spy(SignUpRequestDto.class);
+        doReturn("testSocialID").when(givenDto).getSocialId();
+        doReturn("socialType").when(givenDto).getSocialType();
+        doReturn(":)").when(givenDto).getEmoji();
+        doReturn("test홍길동").when(givenDto).getNickname();
+
+        // when
+        Member savedMember = memberService.buildMemberAndSave(givenDto);
+
+        // then
+        assertThat(savedMember.getSocialId(), is("testSocialID"));
+    }
 }
