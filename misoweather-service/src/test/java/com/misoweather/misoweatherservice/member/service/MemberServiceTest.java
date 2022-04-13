@@ -241,4 +241,22 @@ public class MemberServiceTest {
         // when, then
         assertDoesNotThrow(() -> memberService.checkExistence("testID", "testType", "testName"));
     }
+
+    @Test
+    @DisplayName("createToken() 테스트")
+    void createTokenTest(){
+        // given
+        Member spyMember = spy(Member.class);
+        doReturn(99999L).when(spyMember).getMemberId();
+        doReturn("testSocialID").when(spyMember).getSocialId();
+        doReturn("testSocialType").when(spyMember).getSocialType();
+
+        given(jwtTokenProvider.createToken("99999", "testSocialID", "testSocialType")).willReturn("testSuccess");
+
+        // when
+        String actual = memberService.createToken(spyMember);
+
+        // then
+        assertThat(actual, is("testSuccess"));
+    }
 }
