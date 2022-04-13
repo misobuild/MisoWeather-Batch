@@ -95,4 +95,25 @@ public class MemberServiceJpaTest {
         // then
         assertThat(actual, is(true));
     }
+
+    @Test
+    @DisplayName("성공: <getMember>을 저장한다.")
+    void deleteMemberTest() {
+        // given
+        Member givenMember = Member.builder()
+                .socialType("kakao")
+                .socialId("99999")
+                .defaultRegion(1L)
+                .nickname("홍길동test")
+                .emoji(":)")
+                .build();
+        entityManager.persist(givenMember);
+        Member targetMember = memberRepository.findByNickname("홍길동test").get();
+
+        // when
+        memberService.deleteMember(targetMember);
+
+        // then
+        assertThat(memberRepository.findByNickname("test홍길동").isEmpty(), is(true));
+    }
 }
