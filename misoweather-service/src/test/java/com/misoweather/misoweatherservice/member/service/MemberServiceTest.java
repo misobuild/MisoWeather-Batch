@@ -230,4 +230,15 @@ public class MemberServiceTest {
                 .isInstanceOf(ApiCustomException.class)
                 .hasMessageContaining(HttpStatusEnum.CONFLICT.getMessage());
     }
+
+    @Test
+    @DisplayName("checkExistence() 테스트")
+    void checkExistenceSuccess(){
+        //given
+        given(memberRepository.findBySocialIdAndSocialType(any(), any())).willReturn(Optional.empty());
+        given(memberRepository.findByNickname(any())).willReturn(Optional.empty());
+
+        // when, then
+        assertDoesNotThrow(() -> memberService.checkExistence("testID", "testType", "testName"));
+    }
 }
