@@ -202,4 +202,18 @@ public class MemberServiceTest {
         // when, then
         assertDoesNotThrow(() -> memberService.checkToken("testID", "kakao", "testNickname"));
     }
+
+
+    @Test
+    @DisplayName("checkExistence() 테스트 - 첫번째 CONFLICT 발생")
+    void checkExistenceFirstException(){
+        //given
+        Member givenMember = Member.builder().build();
+        given(memberRepository.findBySocialIdAndSocialType(any(), any())).willReturn(Optional.of(givenMember));
+
+        // when, then
+        assertThatThrownBy(() -> memberService.checkExistence("testID", "kakao", "testNickname"))
+                .isInstanceOf(ApiCustomException.class)
+                .hasMessageContaining(HttpStatusEnum.CONFLICT.getMessage());
+    }
 }
