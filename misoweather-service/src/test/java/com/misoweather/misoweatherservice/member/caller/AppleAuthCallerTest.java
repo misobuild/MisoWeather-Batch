@@ -25,14 +25,12 @@ import static org.mockito.Mockito.spy;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AppleAuthCaller 테스트")
 public class AppleAuthCallerTest {
-
     private ObjectMapper objectMapper;
     @Mock
     private AppleAuthCallBuilder appleAuthCallBuilder;
     @InjectMocks
     private AppleAuthCaller caller;
 
-    // appleAuthCallBuilder가 현재 로직으로는 비어있는 상태
     @Test
     @DisplayName("KakaoAuthCaller 테스트")
     void call(){
@@ -44,11 +42,7 @@ public class AppleAuthCallerTest {
         appleAuthCallBuilder.restTemplate = restTemplate;
         JSONObject actual = new AppleAuthCaller(appleAuthCallBuilder).call();
 
-        // when
-//        JSONObject actual = caller.call();
-
         // then
         assertThat(actual.toString(), is(""));
-
     }
 }
