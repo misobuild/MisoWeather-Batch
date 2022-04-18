@@ -32,4 +32,21 @@ public class AuthCallBuilderTest {
         assertThat(builder.contentType, is(contentTypeValue));
         assertThat(Objects.requireNonNull(builder.httpEntityHeader.getHeaders().get("Content-type")).get(0), is(contentTypeValue));
     }
+
+
+    @Test
+    @DisplayName("APPLE setHttpEntityHeader() 테스트")
+    void appleSetHttpEntityHeaderTest(){
+        // given
+        String contentTypeValue = "application/x-www-form-urlencoded;charset=utf-8";
+
+        // when
+        builder = new AppleAuthCallBuilder();
+        builder.addHeader();
+        builder.setHttpEntityHeader();
+
+        // then
+        assertThat(Objects.requireNonNull(builder.headers.get("Content-type")).get(0), is(contentTypeValue));
+        assertThat(Objects.requireNonNull(builder.httpEntityHeader.getHeaders().get("Content-type")).get(0), is(contentTypeValue));
+    }
 }
