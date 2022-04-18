@@ -3,7 +3,6 @@ package com.misoweather.misoweatherservice.member.caller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.misoweather.misoweatherservice.member.builder.AppleAuthCallBuilder;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
