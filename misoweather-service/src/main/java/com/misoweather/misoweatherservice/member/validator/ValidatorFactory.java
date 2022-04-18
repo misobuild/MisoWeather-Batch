@@ -6,9 +6,12 @@ import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
 import com.misoweather.misoweatherservice.member.validator.AppleValidator;
 import com.misoweather.misoweatherservice.member.validator.KakaoValidator;
 import com.misoweather.misoweatherservice.member.validator.Validator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ValidatorFactory {
-    public static Validator of(String socialId, String socialType, String socialToken){
+    public Validator of(String socialId, String socialType, String socialToken){
         switch (SocialType.getEnum(socialType)){
             case KAKAO:
                 return new KakaoValidator(socialId, socialToken);
