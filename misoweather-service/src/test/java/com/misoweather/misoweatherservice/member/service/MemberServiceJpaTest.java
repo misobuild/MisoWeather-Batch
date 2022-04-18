@@ -53,7 +53,7 @@ public class MemberServiceJpaTest {
     }
 
     @Test
-    @DisplayName("성공: <getMember>을 저장한다.")
+    @DisplayName("성공: <Member>를 조회하여 가져온다.")
     void getMemberTest() {
         // given
         Member givenMember = Member.builder()
@@ -77,7 +77,7 @@ public class MemberServiceJpaTest {
     }
 
     @Test
-    @DisplayName("성공: <getMember>을 저장한다.")
+    @DisplayName("성공:<Member>값이 DB에 존재하면 <Boolean>true를 반환한다.")
     void ifMemberExist() {
         // given
         Member givenMember = Member.builder()
@@ -97,7 +97,7 @@ public class MemberServiceJpaTest {
     }
 
     @Test
-    @DisplayName("성공: <getMember>을 저장한다.")
+    @DisplayName("성공: <Member>를 삭제한다.")
     void deleteMemberTest() {
         // given
         Member givenMember = Member.builder()
@@ -119,7 +119,7 @@ public class MemberServiceJpaTest {
 
 
     @Test
-    @DisplayName("성공: 어쩌구")
+    @DisplayName("성공: <SignUpRequestDto>로 <Member>만들어서 저장한다")
     void buildMemberAndSaveTest(){
         // given
         SignUpRequestDto givenDto = spy(SignUpRequestDto.class);
