@@ -44,4 +44,16 @@ public class SurveryReaderTest {
         HashMap<String, Integer> actual = surveyReader.getInfoMap();
         assertThat(actual.get("안녕하세요"), is(2));
     }
+
+    @Test
+    @DisplayName("setValues 테스트")
+    void setValuesTest() {
+        // when
+        surveyReader.setInfoMap();
+        surveyReader.setValues();
+
+        // then
+        assertThat(surveyReader.getKeyList().get(0), is("안녕하세요"));
+        assertThat(surveyReader.getValueList().get(0), is(100));
+    }
 }
