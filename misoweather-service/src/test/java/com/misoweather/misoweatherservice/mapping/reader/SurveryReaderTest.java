@@ -33,4 +33,15 @@ public class SurveryReaderTest {
 
         this.surveyReader = new SurveyReader(msmList, 9999L, "테스트 서베이 설명", "테스트 서베이");
     }
+
+    @Test
+    @DisplayName("setInfoMap 테스트")
+    void setInfoMapTest() {
+        // when
+        surveyReader.setInfoMap();
+
+        // then
+        HashMap<String, Integer> actual = surveyReader.getInfoMap();
+        assertThat(actual.get("안녕하세요"), is(2));
+    }
 }
