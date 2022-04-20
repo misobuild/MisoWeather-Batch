@@ -56,4 +56,8 @@ public class ControllerAdviceTest {
                 .setControllerAdvice(new ControllerExceptionHandler())
                 .build();
     }
+
+    private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
+        return Objects.requireNonNull(result.getResolvedException()).getClass();
+    }
 }
