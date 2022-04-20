@@ -57,6 +57,23 @@ public class ControllerAdviceTest {
                 .build();
     }
 
+    @Test
+    public void 가져올_코멘트_리스트가_없을_때_Exception_잘_반환하는지() throws Exception{
+        // given
+        doThrow(new ApiCustomException(HttpStatusEnum.BAD_REQUEST)).when(commentController).getCommentList(any(), any());
+
+        // when
+        ResultActions result = this.mockMvc.perform(
+                get("/api/comment")
+                        .param("size", String.valueOf(0))
+                        .accept(MediaType.APPLICATION_JSON));
+        // then
+        assertThat(getApiResultExceptionClass(
+                result
+                        .andExpect(status().isBadRequest())
+                        .andReturn()), is(ApiCustomException.class));
+    }
+
     private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
         return Objects.requireNonNull(result.getResolvedException()).getClass();
     }
