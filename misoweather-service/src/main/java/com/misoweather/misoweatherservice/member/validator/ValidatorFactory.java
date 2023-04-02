@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ValidatorFactory {
 
+    private final KakaoValidator kakaoValidator;
+    private final AppleValidator appleValidator;
+
     public Validator of(String socialId, String socialType, String socialToken){
         switch (SocialType.getEnum(socialType)){
             case KAKAO:
