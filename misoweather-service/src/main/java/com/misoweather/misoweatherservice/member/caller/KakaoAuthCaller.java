@@ -28,4 +28,9 @@ public class KakaoAuthCaller {
                     .valueOf(HttpStatus.valueOf(e.getRawStatusCode()).name()));
         }
     }
+
+
+    public void setSocialToken(String socialToken) {
+        this.socialToken = socialToken;
+    }
 }
