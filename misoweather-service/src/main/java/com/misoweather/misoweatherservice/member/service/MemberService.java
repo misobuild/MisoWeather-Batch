@@ -1,18 +1,18 @@
 package com.misoweather.misoweatherservice.member.service;
 
-import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
-import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
-import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member.MemberRepository;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.nickname.*;
-import com.misoweather.misoweatherservice.member.dto.SignUpRequestDto;
+import com.misoweather.misoweatherservice.global.constants.BigScaleEnum;
+import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
+import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
+import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.member.dto.MemberInfoResponseDto;
 import com.misoweather.misoweatherservice.member.dto.NicknameResponseDto;
-import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.member.validator.ValidatorFactory;
+import com.misoweather.misoweatherservice.member.dto.SignUpRequestDto;
 import com.misoweather.misoweatherservice.member.validator.Validator;
+import com.misoweather.misoweatherservice.member.validator.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,8 @@ public class MemberService {
     private final AdverbRepository adverbRepository;
     private final EmojiRepository emojiRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final ValidatorFactory validatorFactory;
 
     public Member getMember(String socialId, String socialType) {
         Member member = memberRepository
@@ -78,7 +80,7 @@ public class MemberService {
     }
 
     public void checkToken(String socialId, String socialType, String socialToken) {
-        Validator validator = ValidatorFactory.of(socialId, socialType, socialToken);
+        Validator validator = validatorFactory.of(socialId, socialType, socialToken);
         if (!validator.valid()) throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
     }
 
