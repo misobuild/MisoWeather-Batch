@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import com.misoweather.misoweatherservice.member.builder.AppleAuthCallBuilder;
 import com.misoweather.misoweatherservice.member.caller.AppleAuthCaller;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -14,17 +13,21 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 
+@Component
 @AllArgsConstructor
-public class AppleValidator implements Validator {
+public class AppleValidator extends Validator {
     String user;
     String identityToken;
     private final String ISS = "https://appleid.apple.com";
     private final String AUD = "com.misoweather.misoweatherservice.MisoWeather";
+    private final AppleAuthCaller appleAuthCaller;
 
+    @Override
     public Boolean valid() {
         try {
             SignedJWT signedJWT = SignedJWT.parse(identityToken);
@@ -56,7 +59,6 @@ public class AppleValidator implements Validator {
      * @return
      */
     private boolean verifyPublicKey(SignedJWT signedJWT) throws JsonProcessingException {
-        AppleAuthCaller appleAuthCaller = new AppleAuthCaller(new AppleAuthCallBuilder());
         JSONObject jsonObject = appleAuthCaller.call();
         ObjectMapper objectMapper = new ObjectMapper();
         AppleRSAKeys keys = objectMapper.readValue(jsonObject.toString(), AppleRSAKeys.class);
@@ -74,5 +76,10 @@ public class AppleValidator implements Validator {
             throw new ApiCustomException(HttpStatusEnum.BAD_REQUEST);
         }
         return false;
+    }
+
+    public void setIdAndToken(String socialId, String socialToken) {
+        this.user = socialId;
+        this.identityToken = socialToken;
     }
 }
