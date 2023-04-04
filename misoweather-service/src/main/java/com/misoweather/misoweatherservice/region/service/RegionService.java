@@ -41,7 +41,6 @@ public class RegionService {
                 .build();
     }
 
-    // updateRegionAfter 50번째 줄에 있는 memberRegionMapping
     public MemberRegionMapping updateEach(List<MemberRegionMapping> memberRegionMappingList, Region targetRegion){
         return memberRegionMappingList.stream()
                 .filter(item -> item.getRegionStatus().equals(RegionEnum.DEFAULT))
