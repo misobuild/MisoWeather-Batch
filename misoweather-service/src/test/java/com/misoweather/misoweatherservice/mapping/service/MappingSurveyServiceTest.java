@@ -104,7 +104,7 @@ public class MappingSurveyServiceTest {
                 .build());
 
         given(memberSurveyMappingRepository.findByMemberAndSurvey(givenMember, givenSurvey)).willReturn(List.of(givenMemberSurveyMapping));
-        doReturn(LocalDateTime.now().minusMonths(1)).when(givenMemberSurveyMapping).getCreatedAt();
+        doReturn(LocalDateTime.now().plusMonths(1)).when(givenMemberSurveyMapping).getCreatedAt();
 
         // when
         List<MemberSurveyMapping> memberRegionMappingWrongMonthList = mappingSurveyService.filterMemberSurveyMappingList(givenMember, givenSurvey);
