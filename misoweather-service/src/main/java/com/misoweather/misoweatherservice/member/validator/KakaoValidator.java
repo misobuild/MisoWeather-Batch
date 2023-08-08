@@ -1,12 +1,12 @@
 package com.misoweather.misoweatherservice.member.validator;
 
 import com.misoweather.misoweatherservice.member.caller.KakaoAuthCaller;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class KakaoValidator extends Validator{
     String socialId;
     String socialToken;

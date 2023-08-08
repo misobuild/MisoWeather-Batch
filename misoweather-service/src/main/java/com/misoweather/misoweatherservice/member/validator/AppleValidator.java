@@ -11,7 +11,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AppleValidator extends Validator {
     String user;
     String identityToken;
