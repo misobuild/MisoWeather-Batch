@@ -2,7 +2,7 @@ package com.misoweather.misoweatherservice.member.caller;
 
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
 import com.misoweather.misoweatherservice.global.exception.ApiCustomException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class KakaoAuthCaller {
     protected String socialToken;
     private final KakaoAuthCallBuilder kakaoAuthCallBuilder;
