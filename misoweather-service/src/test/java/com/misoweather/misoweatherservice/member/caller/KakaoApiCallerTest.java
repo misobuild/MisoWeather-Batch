@@ -32,7 +32,7 @@ public class KakaoApiCallerTest {
 
     @BeforeEach
     void setUp() {
-        kakaoAuthCaller = new KakaoAuthCaller("testToken", kakaoAuthCallBuilder);
+        kakaoAuthCaller = new KakaoAuthCaller(kakaoAuthCallBuilder);
     }
 
     @Test
