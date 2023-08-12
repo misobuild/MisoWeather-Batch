@@ -4,6 +4,7 @@ import com.misoweather.misoweatherservice.comment.service.CommentService;
 import com.misoweather.misoweatherservice.domain.member.Member;
 import com.misoweather.misoweatherservice.domain.member_region_mapping.MemberRegionMapping;
 import com.misoweather.misoweatherservice.domain.region.Region;
+import com.misoweather.misoweatherservice.kafka.MemberEventProducer;
 import com.misoweather.misoweatherservice.mapping.service.MappingRegionService;
 import com.misoweather.misoweatherservice.mapping.service.MappingSurveyService;
 import com.misoweather.misoweatherservice.member.dto.DeleteMemberRequestDto;
@@ -26,6 +27,7 @@ public class SimpleMemberService {
     private final MappingRegionService mappingRegionService;
     private final CommentService commentService;
     private final RegionService regionService;
+    private final MemberEventProducer memberEventProducer;
 
     // MemberService
     @Transactional
@@ -35,6 +37,7 @@ public class SimpleMemberService {
         Member registeredMember = memberService.buildMemberAndSave(signUpRequestDto);
         Region defaultRegion = regionService.getRegion(signUpRequestDto.getDefaultRegionId());
         mappingRegionService.buildMemberRegionMappingAndSave(registeredMember, defaultRegion);
+        memberEventProducer.sendMessage(registeredMember, defaultRegion);
         return registeredMember;
     }
 
