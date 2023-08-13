@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"서베이"})
 @RestController
+@RequestMapping("/misoweather-service")
 @RequiredArgsConstructor
 public class SurveyController {
     private final SurveyService surveyService;
@@ -28,7 +29,7 @@ public class SurveyController {
     private final SimpleSurveyService simpleSurveyService;
 
     @ApiOperation(value = "사용자의 서베이 답변 상태 가져오기")
-    @GetMapping("/api/survey/member")
+    @GetMapping("/survey/member")
     public ResponseEntity<ApiResponseWithData<ListDto<AnswerStatusDto>>>
     getSurveyStatus(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(ApiResponseWithData.<ListDto<AnswerStatusDto>>builder()
@@ -39,7 +40,7 @@ public class SurveyController {
     }
 
     @ApiOperation(value = "서베이 답변 목록 가져오기")
-    @GetMapping("/api/survey/answers/{surveyId}")
+    @GetMapping("/survey/answers/{surveyId}")
     public ResponseEntity<ApiResponseWithData<ListDto<AnswerSurveyJoinDto>>>
     getAnswer(@PathVariable Long surveyId) {
         return ResponseEntity.ok(ApiResponseWithData.<ListDto<AnswerSurveyJoinDto>>builder()
@@ -50,7 +51,7 @@ public class SurveyController {
     }
 
     @ApiOperation(value = "서베이 답변 입력")
-    @PostMapping("/api/survey")
+    @PostMapping("/survey")
     public ResponseEntity<ApiResponseWithData<AnswerSurveyResponseDto>>
     registerComment(@RequestBody AnswerSurveyDto answerSurveyDto,
                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -62,7 +63,7 @@ public class SurveyController {
     }
 
     @ApiOperation(value = "서베이 결과")
-    @GetMapping("/api/survey")
+    @GetMapping("/survey")
     public ResponseEntity<ApiResponseWithData<ListDto<SurveyReader>>>
     getSurveyResult(@RequestParam(required = false) String shortBigScale) {
         return ResponseEntity.ok(ApiResponseWithData.<ListDto<SurveyReader>>builder()
@@ -73,7 +74,7 @@ public class SurveyController {
     }
 
     @ApiOperation(value = "서베이 답변 여부")
-    @GetMapping("/api/survey/precheck")
+    @GetMapping("/survey/precheck")
     public ResponseEntity<ApiResponseWithData<Boolean>>
     checkSurveyByMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(ApiResponseWithData.<Boolean>builder()

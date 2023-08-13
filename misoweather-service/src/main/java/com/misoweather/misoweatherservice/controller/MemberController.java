@@ -5,6 +5,8 @@ import com.misoweather.misoweatherservice.domain.member.MemberRepository;
 import com.misoweather.misoweatherservice.global.api.ApiResponse;
 import com.misoweather.misoweatherservice.global.api.ApiResponseWithData;
 import com.misoweather.misoweatherservice.global.constants.HttpStatusEnum;
+import com.misoweather.misoweatherservice.kafka.MemberEvent;
+import com.misoweather.misoweatherservice.kafka.MemberEventProducer;
 import com.misoweather.misoweatherservice.member.auth.JwtTokenProvider;
 import com.misoweather.misoweatherservice.member.auth.UserDetailsImpl;
 import com.misoweather.misoweatherservice.member.dto.*;
@@ -12,6 +14,7 @@ import com.misoweather.misoweatherservice.member.service.MemberService;
 import com.misoweather.misoweatherservice.member.service.SimpleMemberService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +24,17 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 
 @RestController
+@RequestMapping("/misoweather-service")
 @RequiredArgsConstructor
 public class MemberController {
     private final Environment env;
     private final MemberService memberService;
     private final SimpleMemberService simpleMemberService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberEventProducer memberEventProducer;
 
     @ApiOperation(value = "회원 가입")
-    @PostMapping("/api/member")
+    @PostMapping("/member")
     public ResponseEntity<ApiResponse> registerUser(@RequestBody SignUpRequestDto signUpRequestDto
             , @RequestParam String socialToken) throws ParseException {
         Member registeredMember = simpleMemberService.registerMember(signUpRequestDto, socialToken);
@@ -46,7 +51,7 @@ public class MemberController {
     }
 
     @ApiOperation(value= "회원 정보 가져오기")
-    @GetMapping("/api/member")
+    @GetMapping("/member")
     public ResponseEntity<ApiResponseWithData<MemberInfoResponseDto>> getMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(ApiResponseWithData.<MemberInfoResponseDto>builder()
                 .status(HttpStatusEnum.OK)
@@ -57,7 +62,7 @@ public class MemberController {
 
     // TODO loginREquestDTO 상속해서 아래 login에서 polymorphism 적용하기
     @ApiOperation(value= "미소웨더 토큰 재발급")
-    @PostMapping("/api/member/token")
+    @PostMapping("/member/token")
     public ResponseEntity<ApiResponse> reissue(@RequestBody LoginRequestDto loginRequestDto
             , @RequestParam String socialToken) {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -69,7 +74,7 @@ public class MemberController {
     }
 
     @ApiOperation(value= "사용 가능 닉네임 조회하기")
-    @GetMapping("/api/member/nickname")
+    @GetMapping("/member/nickname")
     public ResponseEntity<ApiResponseWithData<NicknameResponseDto>> buildNickname() {
         return ResponseEntity.ok(ApiResponseWithData.<NicknameResponseDto>builder()
                 .status(HttpStatusEnum.OK)
@@ -79,7 +84,7 @@ public class MemberController {
     }
 
     @ApiOperation(value= "회원 삭제")
-    @DeleteMapping("/api/member")
+    @DeleteMapping("/member")
     public ResponseEntity<ApiResponse> deleteMember(@RequestBody DeleteMemberRequestDto deleteMemberRequestDto) {
         simpleMemberService.deleteMember(deleteMemberRequestDto);
 
@@ -88,7 +93,7 @@ public class MemberController {
     }
 
     @ApiOperation(value="회원 가입 여부")
-    @GetMapping("/api/member/existence")
+    @GetMapping("/member/existence")
     public ResponseEntity<ApiResponseWithData<Boolean>> checkExistence(@RequestParam String socialId, @RequestParam String socialType){
         return ResponseEntity.ok(ApiResponseWithData.<Boolean>builder()
                 .status(HttpStatusEnum.OK)

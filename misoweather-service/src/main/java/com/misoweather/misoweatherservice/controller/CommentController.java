@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"한줄평"})
 @RestController
+@RequestMapping("/misoweather-service")
 @RequiredArgsConstructor
 public class CommentController {
     private static final Integer DEFAULT_SIZE = 21;
     private final SimpleCommentService simpleCommentService;
 
     @ApiOperation(value = "코멘트 등록")
-    @PostMapping("/api/comment")
+    @PostMapping("/comment")
     public ResponseEntity<ApiResponseWithData<CommentRegisterResponseDto>>
     registerComment(@RequestBody CommentRegisterRequestDto commentRegisterRequestDto,
                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -35,7 +36,7 @@ public class CommentController {
     }
 
     @ApiOperation(value = "코멘트 조회")
-    @GetMapping("/api/comment")
+    @GetMapping("/comment")
     public ResponseEntity<ApiResponseWithData<CommentListResponseDto>>
     getCommentList(@RequestParam(required = false) Long commentId, @RequestParam Integer size) {
         if (size == 0) size = DEFAULT_SIZE;
