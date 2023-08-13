@@ -127,49 +127,49 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
         lsc.add(SecurityContext.builder()
                 .securityReferences(securityReference)
-                .forPaths(PathSelectors.ant("/api/member"))
+                .forPaths(PathSelectors.ant("/misoweather-service/member"))
                 .forHttpMethods(Predicate.isEqual(HttpMethod.DELETE))
                 .build()
         );
 
         lsc.add(SecurityContext.builder()
                 .securityReferences(securityReference)
-                .forPaths(PathSelectors.ant("/api/member"))
+                .forPaths(PathSelectors.ant("/misoweather-service/member"))
                 .forHttpMethods(Predicate.isEqual(HttpMethod.GET))
                 .build()
         );
 
         lsc.add(SecurityContext.builder()
                 .securityReferences(securityReference)
-                .forPaths(PathSelectors.ant("/api/comment"))
+                .forPaths(PathSelectors.ant("/misoweather-service/comment"))
                 .forHttpMethods(Predicate.isEqual(HttpMethod.POST))
                 .build()
         );
 
         lsc.add(SecurityContext.builder()
                 .securityReferences(securityReference)
-                .forPaths(PathSelectors.ant("/api/survey"))
+                .forPaths(PathSelectors.ant("/misoweather-service/survey"))
                 .forHttpMethods(Predicate.isEqual(HttpMethod.POST))
                 .build()
         );
 
         lsc.add(SecurityContext.builder()
                 .securityReferences(securityReference)
-                .forPaths(PathSelectors.ant("/api/survey/member"))
+                .forPaths(PathSelectors.ant("/misoweather-service/survey/member"))
                 .forHttpMethods(Predicate.isEqual(HttpMethod.GET))
                 .build()
         );
 
         lsc.add(SecurityContext.builder()
                 .securityReferences(securityReference)
-                .forPaths(PathSelectors.ant("/api/survey/precheck"))
+                .forPaths(PathSelectors.ant("/misoweather-service/survey/precheck"))
                 .forHttpMethods(Predicate.isEqual(HttpMethod.GET))
                 .build()
         );
 
         lsc.add(SecurityContext.builder()
                 .securityReferences(securityReference)
-                .forPaths(PathSelectors.ant("/api/member-region-mapping/default"))
+                .forPaths(PathSelectors.ant("/misoweather-service/member-region-mapping/default"))
                 .forHttpMethods(Predicate.isEqual(HttpMethod.PUT))
                 .build()
         );
