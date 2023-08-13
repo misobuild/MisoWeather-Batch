@@ -64,7 +64,7 @@ public class ControllerAdviceTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/comment")
+                get("/misoweather-service/comment")
                         .param("size", String.valueOf(0))
                         .accept(MediaType.APPLICATION_JSON));
         // then

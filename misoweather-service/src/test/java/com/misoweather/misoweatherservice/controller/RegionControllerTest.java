@@ -77,7 +77,7 @@ public class RegionControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/region/{bigScaleRegion}", "경기도")
+                get("/misoweather-service/region/{bigScaleRegion}", "경기도")
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result
@@ -98,7 +98,7 @@ public class RegionControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/region/{bigScaleRegion}/{midScaleRegion}", givenRegion.getBigScale(), givenRegion.getMidScale())
+                get("/misoweather-service/region/{bigScaleRegion}/{midScaleRegion}", givenRegion.getBigScale(), givenRegion.getMidScale())
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result
@@ -123,7 +123,7 @@ public class RegionControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                put("/api/member-region-mapping/default")
+                put("/misoweather-service/member-region-mapping/default")
                         .param("regionId", String.valueOf(99999L))
                         .accept(MediaType.APPLICATION_JSON));
         // then

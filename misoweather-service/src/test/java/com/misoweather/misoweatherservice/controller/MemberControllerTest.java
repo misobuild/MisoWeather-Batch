@@ -69,7 +69,7 @@ public class MemberControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/member")
+                get("/misoweather-service/member")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
         // then
@@ -94,7 +94,7 @@ public class MemberControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                post("/api/member")
+                post("/misoweather-service/member")
                         .content(objectMapper.writeValueAsString(signUpRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("socialToken", "testToken")
@@ -115,7 +115,7 @@ public class MemberControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                post("/api/member/token")
+                post("/misoweather-service/member/token")
                         .content(objectMapper.writeValueAsString(loginRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("socialToken", socialToken)
@@ -140,7 +140,7 @@ public class MemberControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/member/nickname")
+                get("/misoweather-service/member/nickname")
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result
@@ -158,7 +158,7 @@ public class MemberControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                delete("/api/member")
+                delete("/misoweather-service/member")
                         .content(objectMapper.writeValueAsString(deleteMemberRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -179,7 +179,7 @@ public class MemberControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/member/existence")
+                get("/misoweather-service/member/existence")
                         .param("socialId", givenSocialId)
                         .param("socialType", givenSocialType)
                         .accept(MediaType.APPLICATION_JSON));

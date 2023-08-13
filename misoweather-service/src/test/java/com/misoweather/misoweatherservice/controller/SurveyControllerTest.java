@@ -86,7 +86,7 @@ public class SurveyControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/survey/member")
+                get("/misoweather-service/survey/member")
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result
@@ -106,7 +106,7 @@ public class SurveyControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/survey/answers/{surveyId}", 99999L)
+                get("/misoweather-service/survey/answers/{surveyId}", 99999L)
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result
@@ -127,7 +127,7 @@ public class SurveyControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                post("/api/survey")
+                post("/misoweather-service/survey")
                         .content(objectMapper.writeValueAsString(givenAnswerSurveyDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -148,7 +148,7 @@ public class SurveyControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/survey")
+                get("/misoweather-service/survey")
                         .param("shortBigScale", "경기")
                         .accept(MediaType.APPLICATION_JSON));
         // then
@@ -169,7 +169,7 @@ public class SurveyControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/survey/precheck")
+                get("/misoweather-service/survey/precheck")
                         .accept(MediaType.APPLICATION_JSON));
         // then
         result

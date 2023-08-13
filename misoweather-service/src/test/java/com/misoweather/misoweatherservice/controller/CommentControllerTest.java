@@ -88,7 +88,7 @@ public class CommentControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                post("/api/comment")
+                post("/misoweather-service/comment")
                         .content(objectMapper.writeValueAsString(givenCommentRegisterRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -129,7 +129,7 @@ public class CommentControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/comment")
+                get("/misoweather-service/comment")
                         .param("commentId", String.valueOf(99L))
                         .param("size", String.valueOf(1))
                         .accept(MediaType.APPLICATION_JSON));
@@ -170,7 +170,7 @@ public class CommentControllerTest {
 
         // when
         ResultActions result = this.mockMvc.perform(
-                get("/api/comment")
+                get("/misoweather-service/comment")
                         .param("size", String.valueOf(0))
                         .accept(MediaType.APPLICATION_JSON));
         // then
